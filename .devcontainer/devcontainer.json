@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/typescript-node
 {
-	"name": "depeg-ui",
+	"name": "terraguard-ui",
 	// "build": {
 	// 	"dockerfile": "Dockerfile",
 	// 	// Update 'VARIANT' to pick a Node version: 18, 16, 14.
@@ -13,7 +13,7 @@
 	// },
 	"dockerComposeFile": "docker-compose.yaml",
     "service": "webapp",
-    "workspaceFolder": "/workspaces/depeg-ui",
+    "workspaceFolder": "/workspaces/terraguard-ui",
 
 	// Configure tool-specific properties.
 	"customizations": {
