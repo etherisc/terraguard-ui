@@ -15,18 +15,18 @@ export const etheriscTheme = createTheme({
             // paper: 'hsl(222,74%,96%)'
         },
         primary: {
-            // light: will be calculated from palette.primary.main,
-            main: '#2B66EE',
-            // dark: will be calculated from palette.primary.main,
+            light: '#5C6C8C',
+            main: '#374B72',
+            dark: '#142B59',
             // contrastText: will be calculated to contrast with palette.primary.main
         },
         secondary: {
             // main: "#9577F7", // purple
-            main: "#F8B83A", // yellow
+            main: "#5AB9E6", // yellow
             // dark: will be calculated from palette.secondary.main,
             // contrastText: will be calculated to contrast with palette.secondary.main
-            // contrastText: "#fff" // white
-            contrastText: "#000000DE" // black
+            contrastText: "#fff" // white
+            // contrastText: "#000000DE" // black
         },
     },
     components: {

@@ -89,19 +89,18 @@ export default function Header(props: HeaderProps) {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Box sx={{ pt: 1, display: { xs: 'none', md: 'inherit'}}}>
-                            <Link href="https://www.etherisc.com" target="_blank" rel="noreferrer">
-                                <Image src="/etherisc_logo_white.svg" alt="Etherisc logo" width={100} height={22}  />
-                            </Link>
+                        <Box sx={{ mr: 4, display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
+                            <Typography variant="h5" >Quantectum</Typography>
+                            <Typography variant="h6" sx={{ ml: 1 }}>Terraguard</Typography>
                         </Box>
-                        <Box sx={{ pt: 1, display: { xs: 'inherit', md: 'none'}}}>
+                        {/* <Box sx={{ pt: 1, display: { xs: 'inherit', md: 'none'}}}>
                             <Link href="https://www.etherisc.com" target="_blank" rel="noreferrer">
                                 <Image src="/etherisc_logo_bird_white.svg" alt="Etherisc logo" width={28} height={22} />
                             </Link>
-                        </Box>
-                        <Box sx={{ ml: 2 }}>
-                            <HeaderLink text={props.title} href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
-                        </Box>
+                        </Box> */}
+                        {/* <Box sx={{ ml: 2 }}>
+                            <HeaderLink text="Terraguard" href="/" variant="h6" sx={{ display: { xs: 'none', md: 'block'}}} />
+                        </Box> */}
 
                         {/* links only shown on desktop */}
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 1 }}>
