@@ -15,6 +15,10 @@ export interface PolicyData {
     isAllowedToClaim: boolean;
     claim: ClaimData | undefined;
     transactionHash: string;
+    protectionType: number;
+    latitude: number;
+    longitude: number;
+    locationId: number;
 }
 
 export enum PolicyState {

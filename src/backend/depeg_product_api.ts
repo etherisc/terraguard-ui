@@ -142,6 +142,7 @@ export class DepegProductApi {
     async getPolicies(
         ownerWalletAddress: string
     ): Promise<Array<PolicyData>> {
+        console.log("getPolicies", ownerWalletAddress);
         const numPolicies = (await this.depegProduct!.processIds(ownerWalletAddress)).toNumber();
     
         const policies = new Array();
@@ -160,6 +161,7 @@ export class DepegProductApi {
         idx: number,
         checkClaim: boolean,
     ): Promise<PolicyData> {
+        console.log("getPolicy", ownerWalletAddress, idx);
         const policy = await this.getPolicyForProduct(ownerWalletAddress, idx);
         // if (checkClaim) {
         //     const isAllowedToClaim = await this.depegProduct!.policyIsAllowedToClaim(policy.id);
@@ -190,8 +192,11 @@ export class DepegProductApi {
             ownerWalletAddress: string,
             idx: number,
             ): Promise<PolicyData> {
+        console.log("getPolicyForProduct", ownerWalletAddress, idx);
         const processId = await this.depegProduct!.getProcessId(ownerWalletAddress, idx);
+        console.log("processId", processId);
         const { state, premiumAmount, sumInsuredAmount, data, createdAt } = await this.instanceService!.getApplication(processId);
+        console.log("application state", state);
         const { owner } = await this.instanceService!.getMetadata(processId);
         let policyState = undefined;
         let payoutState = undefined;
@@ -208,11 +213,11 @@ export class DepegProductApi {
                 }
             }
         }
-        const { wallet, duration } = await this.depegRiskpool!.decodeApplicationParameterFromData(data);
+        const { protectionType, latitude, longitude, locationId } = await this.depegProduct!.decodeApplicationParameterFromData(data);
         return {
             id: processId,
             policyHolder: owner,
-            protectedWallet: wallet,
+            // protectedWallet: wallet,
             applicationState: state,
             policyState: policyState,
             payoutState: payoutState,
@@ -220,8 +225,12 @@ export class DepegProductApi {
             premium: premiumAmount.toString(),
             protectedAmount: sumInsuredAmount.mul(this.protectedAmountFactor).toString(),
             payoutCap: sumInsuredAmount.toString(),
-            duration: duration.toNumber(),
+            // duration: duration.toNumber(),
             isAllowedToClaim: false,
+            protectionType: protectionType,
+            latitude: latitude,
+            longitude: longitude,
+            locationId: locationId,
         } as PolicyData;
     }
 

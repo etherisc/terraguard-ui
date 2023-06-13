@@ -19,6 +19,7 @@ import { ga_event } from "../../utils/google_analytics";
 import ApplicationForm from "./application_form";
 import PolicyConfirmation from "./policy_confirmation";
 import { fetchBalances } from "../../redux/thunks/account";
+import { useRouter } from "next/router";
 
 export interface ApplicationProps {
     insurance: BackendApi;
@@ -32,6 +33,7 @@ export default function Application(props: ApplicationProps) {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     useTransactionNotifications();
     const { showPersistentErrorSnackbarWithCopyDetails } = useNotifications();
+    const router = useRouter();
 
     const signer = useSelector((state: RootState) => state.chain.signer);
     const isConnected = useSelector((state: RootState) => state.chain.isConnected);
@@ -111,6 +113,7 @@ export default function Application(props: ApplicationProps) {
         });
 
         store.dispatch(fetchBalances(signer!));
+        router.push("/policies");
     }
 
     async function doApproval(walletAddress: string, premium: BigNumber): Promise<Boolean> {
@@ -267,16 +270,16 @@ export default function Application(props: ApplicationProps) {
                 premiumTrxTextKey={premiumTrxTextKey}
             />
         );
-    } else {
-        content = (
-            <PolicyConfirmation
-                processId={protectionDetails[0] as string}
-                wallet={protectionDetails[1] as string}
-                amount={protectionDetails[2] as BigNumber}
-                coverageDurationSeconds={protectionDetails[3] as number}
-                currency={props.insurance.usd1}
-                currencyDecimals={props.insurance.usd1Decimals}
-                />);
+    // } else {
+    //     content = (
+    //         <PolicyConfirmation
+    //             processId={protectionDetails[0] as string}
+    //             wallet={protectionDetails[1] as string}
+    //             amount={protectionDetails[2] as BigNumber}
+    //             coverageDurationSeconds={protectionDetails[3] as number}
+    //             currency={props.insurance.usd1}
+    //             currencyDecimals={props.insurance.usd1Decimals}
+    //             />);
     }
 
     return (

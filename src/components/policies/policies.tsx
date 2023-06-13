@@ -248,22 +248,22 @@ export default function Policies(props: PoliciesProps) {
                 if (params.value.id === '') {
                     return (<></>);
                 }
-                return (<><Address address={params.value!.id} iconColor="secondary.main" />{ownerBadge(params.value!)}</>);
+                return (<><Address address={params.value!.id} iconColor="secondary.main" /></>);
             },
             sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
                 gridStringOrNumberComparator(v1.id, v2.id, cellParams1, cellParams2)
         },
-        { 
-            field: 'protectedWallet', 
-            headerName: t('table.header.walletAddress'), 
-            flex: 0.8,
-            valueGetter: (params: GridValueGetterParams) => params.row,
-            renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
-            },
-            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
-                gridStringOrNumberComparator(v1.protectedWallet, v2.protectedWallet, cellParams1, cellParams2)
-        },
+        // { 
+        //     field: 'protectedWallet', 
+        //     headerName: t('table.header.walletAddress'), 
+        //     flex: 0.8,
+        //     valueGetter: (params: GridValueGetterParams) => params.row,
+        //     renderCell: (params: GridRenderCellParams<PolicyData>) => {
+        //         return (<><Address address={params.value!.protectedWallet} iconColor="secondary.main" />{protectedByBadge(params.value!)}</>);
+        //     },
+        //     sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => 
+        //         gridStringOrNumberComparator(v1.protectedWallet, v2.protectedWallet, cellParams1, cellParams2)
+        // },
         { 
             field: 'protectedAmount', 
             headerName: t('table.header.protectedAmount'), 
