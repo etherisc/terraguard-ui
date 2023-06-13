@@ -240,7 +240,8 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             // const gasless = values.gasless;
             const protectionType = values.protectionType;
             const locationId = values.locationId;
-            props.applyForPolicy(protectedAmountWei, protectionType, locationId, parseUnits("10", 6));
+            const premium = protectedAmountWei.div(20);
+            props.applyForPolicy(protectedAmountWei, protectionType, locationId, premium);
         } finally {
             setApplicationInProgress(false);
         }
