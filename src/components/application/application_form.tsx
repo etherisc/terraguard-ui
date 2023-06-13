@@ -352,11 +352,12 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Map setCoords={(lat, lng) => {
                         setValue("latitude", lat);
                         setValue("longitude", lng);
+                        setValue("locationId", parseInt((20 * (lat + lng)).toFixed(0)));
                     }}/>
                 </Grid>
 
 
-                <Grid item md={6}>
+                <Grid item md={4}>
                     <Controller
                         name="latitude"
                         control={control}
@@ -371,7 +372,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                             />}
                     />
                 </Grid>        
-                <Grid item md={6}>
+                <Grid item md={4}>
                     <Controller
                         name="longitude"
                         control={control}
@@ -386,6 +387,25 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                             />}
                     />
                 </Grid>        
+                <Grid item md={4}>
+                    <Controller
+                        name="locationId"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) =>
+                            <TextField
+                                label="Location ID"
+                                fullWidth
+                                disabled={props.formDisabled}
+                                variant={INPUT_VARIANT}
+                                // make readonly
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                {...field}
+                            />}
+                    />
+                </Grid>
                 {/* <Grid item xs={12} md={6}>
                     <Controller
                         name="coverageDuration"
