@@ -39,7 +39,7 @@ export class DepegProductApi {
     }
 
     isInitialized(): boolean {
-        return this.instanceService !== undefined;
+        return this.instanceService !== undefined && this.depegRiskpool !== undefined && this.depegRiskpoolId !== undefined;
     }
 
     getRiskpoolId(): number {
