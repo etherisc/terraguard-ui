@@ -279,7 +279,7 @@ export default function Application(props: ApplicationProps) {
     return (
         <>
             <div>
-                <Typography variant="h5" mb={2}>{t('title', { currency: props.insurance.usd1 })}</Typography>
+                <Typography variant="h6" mb={2}>Buy TerraGuard earthquake protection</Typography>
 
                 <Stepper activeStep={activeStep} sx={{ display: { 'xs': 'none', 'md': 'flex' }}}>
                     {steps.map((label) => {

@@ -20,6 +20,7 @@ import { RootState } from '../../redux/store';
 import { formatCurrencyBN } from "../../utils/numbers";
 import TermsOfService from '../terms_of_service';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
+import Map from "../application/map";
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -324,7 +325,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         rules={{ required: true, min: protectedAmountMin, max: protectedAmountMax, pattern: REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS  }}
                         render={({ field }) => 
                             <TextField 
-                                label={t('protectedAmount')}
+                                label="Sum insured"
                                 fullWidth
                                 disabled={props.formDisabled}
                                 variant={INPUT_VARIANT}
@@ -347,6 +348,14 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 />}
                         />
                 </Grid>
+                <Grid item md={12}>
+                    <Map setCoords={(lat, lng) => {
+                        setValue("latitude", lat);
+                        setValue("longitude", lng);
+                    }}/>
+                </Grid>
+
+
                 <Grid item md={6}>
                     <Controller
                         name="latitude"
