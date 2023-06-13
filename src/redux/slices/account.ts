@@ -7,7 +7,7 @@ export interface AccountState {
     address: string | undefined,
     balance: Amount,
     balanceUsd1: Amount,
-    balanceUsd2: Amount,
+    // balanceUsd2: Amount,
 }
 
 const emptyEth = {
@@ -25,7 +25,7 @@ const initialState: AccountState = {
     address: undefined,
     balance: emptyEth,
     balanceUsd1: emptyUsd,
-    balanceUsd2: emptyUsd,
+    // balanceUsd2: emptyUsd,
 }
 
 export const accountSlice = createSlice({
@@ -39,7 +39,7 @@ export const accountSlice = createSlice({
             state.address = undefined;
             state.balance = emptyEth;
             state.balanceUsd1 = emptyUsd;
-            state.balanceUsd2 = emptyUsd;
+            // state.balanceUsd2 = emptyUsd;
         },
     },
     extraReducers: (builder) => {
@@ -48,7 +48,7 @@ export const accountSlice = createSlice({
             // Add user to the state array
             state.balance = action.payload[0];
             state.balanceUsd1 = action.payload[1];
-            state.balanceUsd2 = action.payload[2];
+            // state.balanceUsd2 = action.payload[2];
         })
     },
 });

@@ -16,8 +16,8 @@ export default function Account() {
     const address = useSelector((state: RootState) => state.account.address);
     const balance = useSelector((state: RootState) => state.account.balance);
     const balanceUsd1 = useSelector((state: RootState) => state.account.balanceUsd1);
-    const balanceUsd2 = useSelector((state: RootState) => state.account.balanceUsd2);
-    const balances = [balance, balanceUsd1, balanceUsd2];
+    // const balanceUsd2 = useSelector((state: RootState) => state.account.balanceUsd2);
+    const balances = [balance, balanceUsd1];
     
     const [ activeBalance, setActiveBalance ] = useState(0);
 

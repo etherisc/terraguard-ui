@@ -22,10 +22,10 @@ export const fetchBalances = createAsyncThunk(
         const depegProduct = DepegProduct__factory.connect(depegProductContractAddress!, signer);
         const myAddress = await signer.getAddress();
 
-        const token1Address = await depegProduct.getProtectedToken();
-        const token1 = getErc20Token(token1Address!, signer);
-        const token2Address = await depegProduct.getToken();
-        const token2 = getErc20Token(token2Address!, signer);
+        // const token1Address = await depegProduct.getProtectedToken();
+        const token1 = getErc20Token(process.env.NEXT_PUBLIC_USDC_CONTRACT_ADDRESS!, signer);
+        // const token2Address = await depegProduct.getToken();
+        // const token2 = getErc20Token(token2Address!, signer);
 
         const token1Balance = await token1?.balanceOf(myAddress);
         const token1Amount = { 
@@ -34,13 +34,13 @@ export const fetchBalances = createAsyncThunk(
             decimals: await token1?.decimals(),
         } as Amount;
         
-        const token2Balance = await token2?.balanceOf(myAddress);
-        const token2Amount = {
-            amount: token2Balance.toString(),
-            currency: await token2.symbol(),
-            decimals: await token2?.decimals(),
-        };
+        // const token2Balance = await token2?.balanceOf(myAddress);
+        // const token2Amount = {
+        //     amount: token2Balance.toString(),
+        //     currency: await token2.symbol(),
+        //     decimals: await token2?.decimals(),
+        // };
 
-        return [chainTokenAmount, token1Amount, token2Amount];
+        return [chainTokenAmount, token1Amount];
     }
 )
