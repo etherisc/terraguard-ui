@@ -19,6 +19,7 @@ import { INPUT_VARIANT } from '../../config/theme';
 import { RootState } from '../../redux/store';
 import { formatCurrencyBN } from "../../utils/numbers";
 import TermsOfService from '../terms_of_service';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -302,29 +303,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         control={control}
                         rules={{ required: true }}
                         render={({ field }) => 
-                            <TextField 
-                                label="Protection type"
-                                fullWidth
-                                disabled={props.formDisabled}
-                                variant={INPUT_VARIANT}
-                                {...field} 
-                                // InputProps={{
-                                //     startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
-                                // }}
-                                // onBlur={async (e) => { 
-                                //     field.onBlur();
-                                //     await calculatePremium();
-                                // }}
-                                // error={errors.protectedAmount !== undefined}
-                                // helperText={errors.protectedAmount !== undefined 
-                                //     ? ( errors.protectedAmount.type == 'pattern' 
-                                //             ? t(`error.field.amountType`, { "ns": "common"}) 
-                                //             : t(`error.field.${errors.protectedAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${protectedAmountMin}`, "maxValue": `${props.usd1} ${protectedAmountMax}` })
-                                //     ) : t('protected_amount_helper', { currency: walletUsd1Balance?.currency, balance: formatCurrencyBN(walletUsd1BalanceBN, walletUsd1Balance.decimals)})
-                                // }
-                                // data-testid="protected-amount"
-                                />}
-                        />
+                            <FormControl variant="filled" fullWidth>
+                                <InputLabel id="demo-simple-select-filled-label">Protection type</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-filled-label"
+                                    id="demo-simple-select-filled"
+                                    {...field}
+                                >
+                                    <MenuItem value={5}>Magnitude 5+</MenuItem>
+                                    <MenuItem value={7}>Magnitude 7+</MenuItem>
+                                </Select>
+                            </FormControl>
+                        }
+                    />
                 </Grid>
                 <Grid item xs={6}>
                     <Controller
