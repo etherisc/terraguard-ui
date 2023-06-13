@@ -1,12 +1,13 @@
 import { Signer } from "ethers";
 import { NextApiRequest, NextApiResponse } from "next";
 import { BundleData } from "../../../backend/bundle_data";
-import { getDepegRiskpool, getInstanceService } from "../../../backend/gif_registry";
+import { getInstanceService, getTerraGuardRiskpool } from "../../../backend/gif_registry";
 import { DepegRiskpoolApi } from "../../../backend/riskpool_api";
 import { DepegProduct, DepegProduct__factory, DepegRiskpool, IInstanceService } from "../../../contracts/depeg-contracts";
 import { getBackendVoidSigner } from "../../../utils/chain";
 import { redisClient } from "../../../utils/redis";
 import { isIpAllowedToConnect } from "../../../utils/check_ip";
+import { TerraGuardProduct, TerraGuardRiskpool, TerraGuardProduct__factory } from "../../../contracts/terraguard-poc-contracts";
 
 const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
 const usd2Decimals = parseInt(process.env.NEXT_PUBLIC_USD2_DECIMALS ?? "6");
@@ -22,8 +23,8 @@ export default async function handler(
     }
 
     const signer = await getBackendVoidSigner();
-    const { depegRiskpool, depegRiskpoolId, instanceService } = await getRiskpool(signer);
-    const riskpoolApi = new DepegRiskpoolApi(depegRiskpool, depegRiskpoolId, instanceService, usd2Decimals);
+    const { terraGuardRiskpool, riskpoolId, instanceService } = await getRiskpool(signer);
+    const riskpoolApi = new DepegRiskpoolApi(terraGuardRiskpool, riskpoolId, instanceService, usd2Decimals);
     await riskpoolApi.initialize();
 
     const updateOnlyBundle = req.query.bundleId as string;
@@ -66,16 +67,16 @@ async function updateAllBundles(riskpoolApi: DepegRiskpoolApi): Promise<Array<Bu
 
 async function getRiskpool(signer: Signer): 
         Promise<{ 
-            depegProduct: DepegProduct, 
-            depegRiskpool: DepegRiskpool, 
-            depegRiskpoolId: number, 
+            terraGuardProduct: TerraGuardProduct, 
+            terraGuardRiskpool: TerraGuardRiskpool, 
+            riskpoolId: number, 
             instanceService: IInstanceService 
         }> 
 {
-    const depegProduct = DepegProduct__factory.connect(depegProductContractAddress, signer);
-    const registryAddress = await depegProduct.getRegistry();
+    const terraGuardProduct = TerraGuardProduct__factory.connect(depegProductContractAddress, signer);
+    const registryAddress = await terraGuardProduct.getRegistry();
     const instanceService = await getInstanceService(registryAddress, signer);
-    const depegRiskpoolId = (await depegProduct.getRiskpoolId()).toNumber();
-    const depegRiskpool = await getDepegRiskpool(instanceService, depegRiskpoolId);
-    return { depegProduct, depegRiskpool, depegRiskpoolId, instanceService };
+    const riskpoolId = (await terraGuardProduct.getRiskpoolId()).toNumber();
+    const terraGuardRiskpool = await getTerraGuardRiskpool(instanceService, riskpoolId);
+    return { terraGuardProduct, terraGuardRiskpool, riskpoolId, instanceService };
 }

@@ -1,6 +1,7 @@
 import { Signer } from "ethers";
 import { formatBytes32String } from "ethers/lib/utils";
-import { DepegRiskpool, DepegRiskpool__factory, IInstanceService, IInstanceService__factory, IRegistry__factory, IRiskpoolService, IRiskpoolService__factory } from "../contracts/depeg-contracts";
+import { IInstanceService, IInstanceService__factory, IRegistry__factory, IRiskpoolService, IRiskpoolService__factory } from "../contracts/depeg-contracts";
+import { TerraGuardRiskpool, TerraGuardRiskpool__factory } from "../contracts/terraguard-poc-contracts";
 
 export async function getInstanceService(registryAddress: string, signer: Signer): Promise<IInstanceService> {
     console.log("getInstanceService", registryAddress);
@@ -16,11 +17,11 @@ export async function getRiskpoolService(instanceService: IInstanceService): Pro
     return IRiskpoolService__factory.connect(riskpoolServiceAddress, instanceService.signer);
 }
 
-export async function getDepegRiskpool(instanceService: IInstanceService, componentId: number): Promise<DepegRiskpool> {
-    console.log("getDepegRiskpool", componentId);
+export async function getTerraGuardRiskpool(instanceService: IInstanceService, componentId: number): Promise<TerraGuardRiskpool> {
+    console.log("getTerraGuardRiskpool", componentId);
     const componentAddress = await instanceService.getComponent(componentId);
     if (componentAddress === undefined) {
         throw new Error("Component not found");
     }
-    return DepegRiskpool__factory.connect(componentAddress, instanceService.signer);
+    return TerraGuardRiskpool__factory.connect(componentAddress, instanceService.signer);
 }

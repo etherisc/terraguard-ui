@@ -1,20 +1,21 @@
 import DepegProductBuild from '@etherisc/depeg-contracts/build/contracts/DepegProduct.json';
 import { Coder } from "abi-coder";
 import { BigNumber, ContractReceipt, ContractTransaction, Signer, VoidSigner } from "ethers";
-import { DepegProduct, DepegProduct__factory, DepegRiskpool, IInstanceService } from "../contracts/depeg-contracts";
+import { IInstanceService } from "../contracts/depeg-contracts";
 import { DepegState } from "../types/depeg_state";
 import { TransactionFailedError } from "../utils/error";
-import { getDepegRiskpool, getInstanceService } from "./gif_registry";
+import { getInstanceService, getTerraGuardRiskpool } from "./gif_registry";
 import { APPLICATION_STATE_UNDERWRITTEN, PAYOUT_STATE_EXPECTED, PAYOUT_STATE_PAIDOUT, PolicyData } from "./policy_data";
 import { ComponentState } from '../types/component_state';
 import { mapComponentState } from '../utils/component';
+import { TerraGuardProduct, TerraGuardProduct__factory, TerraGuardRiskpool } from '../contracts/terraguard-poc-contracts';
 
 export class DepegProductApi {
 
     private depegProductAddress: string;
     private signer: Signer;
-    private depegProduct?: DepegProduct;
-    private depegRiskpool?: DepegRiskpool;
+    private depegProduct?: TerraGuardProduct;
+    private depegRiskpool?: TerraGuardRiskpool;
     private depegRiskpoolId?: number;
     private instanceService?: IInstanceService;
     // the factor to calculate the protected amount based on the sum insured 
@@ -29,11 +30,11 @@ export class DepegProductApi {
     }
 
     async initialize() {
-        this.depegProduct = DepegProduct__factory.connect(this.depegProductAddress, this.signer);
+        this.depegProduct = TerraGuardProduct__factory.connect(this.depegProductAddress, this.signer);
         const registryAddress = await this.depegProduct.getRegistry();
         this.instanceService = await getInstanceService(registryAddress, this.signer);
         this.depegRiskpoolId = (await this.depegProduct.getRiskpoolId()).toNumber();
-        this.depegRiskpool = await getDepegRiskpool(this.instanceService, this.depegRiskpoolId);
+        this.depegRiskpool = await getTerraGuardRiskpool(this.instanceService, this.depegRiskpoolId);
         this.protectedAmountFactor = 100 / (await this.depegRiskpool.getSumInsuredPercentage()).toNumber();
     }
 
@@ -53,11 +54,11 @@ export class DepegProductApi {
         return this.signer;
     }
 
-    getDepegProduct(): DepegProduct {
+    getDepegProduct(): TerraGuardProduct {
         return this.depegProduct!;
     }
     
-    getDepegRiskpool(): DepegRiskpool {
+    getDepegRiskpool(): TerraGuardRiskpool {
         return this.depegRiskpool!;
     }
 
@@ -103,7 +104,7 @@ export class DepegProductApi {
             beforeApplyCallback(this.depegProduct!.address);
         }
         try {
-            const tx = await this.depegProduct!.applyForPolicyWithBundle(
+            const tx = await this.depegProduct!.applyForPolicy(
                 protectionType,
                 locationId,
                 protectedAmount, 
@@ -149,28 +150,28 @@ export class DepegProductApi {
         checkClaim: boolean,
     ): Promise<PolicyData> {
         const policy = await this.getPolicyForProduct(ownerWalletAddress, idx);
-        if (checkClaim) {
-            const isAllowedToClaim = await this.depegProduct!.policyIsAllowedToClaim(policy.id);
-            policy.isAllowedToClaim = isAllowedToClaim;
+        // if (checkClaim) {
+        //     const isAllowedToClaim = await this.depegProduct!.policyIsAllowedToClaim(policy.id);
+        //     policy.isAllowedToClaim = isAllowedToClaim;
 
-            const hasClaim = await this.depegProduct!.hasDepegClaim(policy.id);
+        //     const hasClaim = await this.depegProduct!.hasDepegClaim(policy.id);
 
-            if (hasClaim) {
-                const { actualAmount, claimState, claimAmount, claimCreatedAt } = await this.depegProduct!.getClaimData(policy.id);
-                policy.claim = {
-                    actualAmount: actualAmount.toString(),
-                    state: claimState,
-                    paidAmount: undefined,
-                    claimAmount: claimAmount.toString(),
-                    claimCreatedAt: claimCreatedAt.toNumber(),
-                }
+        //     if (hasClaim) {
+        //         const { actualAmount, claimState, claimAmount, claimCreatedAt } = await this.depegProduct!.getClaimData(policy.id);
+        //         policy.claim = {
+        //             actualAmount: actualAmount.toString(),
+        //             state: claimState,
+        //             paidAmount: undefined,
+        //             claimAmount: claimAmount.toString(),
+        //             claimCreatedAt: claimCreatedAt.toNumber(),
+        //         }
 
-                if (claimState == 3) { // state is closed
-                    const claim = await this.instanceService!.getClaim(policy.id, 0); // claim id is always 0 for depeg
-                    policy.claim!.paidAmount = claim.paidAmount.toString();
-                }
-            }
-        }
+        //         if (claimState == 3) { // state is closed
+        //             const claim = await this.instanceService!.getClaim(policy.id, 0); // claim id is always 0 for depeg
+        //             policy.claim!.paidAmount = claim.paidAmount.toString();
+        //         }
+        //     }
+        // }
         return policy;
     }
     
@@ -214,18 +215,18 @@ export class DepegProductApi {
     }
 
     async getDepegState(): Promise<DepegState> {
-        const state = await this.depegProduct!.getDepegState();
-        switch (state) {
-            case 0:
-            case 1:
+        // const state = await this.depegProduct!.getDepegState();
+        // switch (state) {
+        //     case 0:
+        //     case 1:
                 return DepegState.Active;
-            case 2:
-                return DepegState.Paused;
-            case 3:
-                return DepegState.Depegged;
-            default:
-                throw new Error("Unknown product state: " + state);
-        }
+        //     case 2:
+        //         return DepegState.Paused;
+        //     case 3:
+        //         return DepegState.Depegged;
+        //     default:
+        //         throw new Error("Unknown product state: " + state);
+        // }
     }
 
     async claim(
@@ -236,19 +237,20 @@ export class DepegProductApi {
         if (beforeApplyCallback !== undefined) {
             beforeApplyCallback(this.depegProduct!.address);
         }
-        try {
-            const tx = await this.depegProduct!.createDepegClaim(processId)
-            if (beforeWaitCallback !== undefined) {
-                beforeWaitCallback(this.depegProduct!.address);
-            }
-            const receipt = await tx.wait();
-            // console.log(receipt);
-            return [tx, receipt];
-        } catch (e) {
-            console.log("caught error while creating a depeg claim: ", e);
-            // @ts-ignore e.code
-            throw new TransactionFailedError(e.code, e);
-        }
+        // try {
+        //     const tx = await this.depegProduct!.createDepegClaim(processId)
+        //     if (beforeWaitCallback !== undefined) {
+        //         beforeWaitCallback(this.depegProduct!.address);
+        //     }
+        //     const receipt = await tx.wait();
+        //     // console.log(receipt);
+        //     return [tx, receipt];
+        // } catch (e) {
+        //     console.log("caught error while creating a depeg claim: ", e);
+        //     // @ts-ignore e.code
+        //     throw new TransactionFailedError(e.code, e);
+        // }
+        return [undefined!, undefined!];
     }
 
     extractClaimIdFromLogs(logs: any[]): string|undefined {

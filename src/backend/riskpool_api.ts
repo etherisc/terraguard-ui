@@ -12,10 +12,11 @@ import { BundleData, MAX_BUNDLE } from "./bundle_data";
 import StakingApi from "./staking_api";
 import { ComponentState } from '../types/component_state';
 import { mapComponentState } from '../utils/component';
+import { TerraGuardRiskpool } from '../contracts/terraguard-poc-contracts';
 
 export class DepegRiskpoolApi {
 
-    private depegRiskpool: DepegRiskpool;
+    private depegRiskpool: TerraGuardRiskpool;
     private riskpoolId: number;
     private instanceService: IInstanceService;
     private stakingApi?: StakingApi;
@@ -29,7 +30,7 @@ export class DepegRiskpoolApi {
     private protectedAmountFactor = 1;
 
     constructor(
-        riskpool: DepegRiskpool,
+        riskpool: TerraGuardRiskpool,
         riskpoolId: number,
         instanceService: IInstanceService,
         usd2Decimals: number,

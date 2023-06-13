@@ -3,7 +3,7 @@
   "version": "1.1.17",
   "private": true,
   "scripts": {
-    "postinstall": "$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes",
+    "postinstall": "$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes && $npm_execpath run typechainTerraguardTypes",
     "dev": "next dev",
     "prebuild": "./extract_version.sh",
     "build": "next build",
@@ -14,7 +14,8 @@
     "lint": "next lint",
     "typechainDepegTypes": "typechain --target ethers-v5 --out-dir src/contracts/depeg-contracts './node_modules/@etherisc/depeg-contracts/build/contracts/**/*json'",
     "typechainChainlinkTypes": "typechain --target ethers-v5 --out-dir src/contracts/chainlink-contracts './node_modules/@chainlink/contracts/abi/v0.8/AggregatorV3Interface.json'",
-    "typechainRegistryTypes": "typechain --target ethers-v5 --out-dir src/contracts/registry-contracts './node_modules/@etherisc/registry-contracts/build/contracts/**/*json'"
+    "typechainRegistryTypes": "typechain --target ethers-v5 --out-dir src/contracts/registry-contracts './node_modules/@etherisc/registry-contracts/build/contracts/**/*json'",
+    "typechainTerraguardTypes": "typechain --target ethers-v5 --out-dir src/contracts/terraguard-poc-contracts './node_modules/@etherisc/terraguard-poc-contracts/build/contracts/**/*json'"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
@@ -66,6 +67,7 @@
     "@chainlink/contracts": "^0.6.1",
     "@etherisc/depeg-contracts": "1.1.0",
     "@etherisc/registry-contracts": "1.1.0",
+    "@etherisc/terraguard-poc-contracts": "0.0.2-0b66c16",
     "@hookform/devtools": "^4.3.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
