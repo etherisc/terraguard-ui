@@ -25,22 +25,22 @@ export default function BundleDetails(props: BundleDetailsProps) {
     const symbol = props.currency;
     const symbolProtected = props.currencyProtected;
     const capacity = BigNumber.from(props.bundle.capacity);
-    const supportedCapital = BigNumber.from(props.bundle.capitalSupport);
+    // const supportedCapital = BigNumber.from(props.bundle.capitalSupport);
     const balance = BigNumber.from(props.bundle.balance);
     const capital = BigNumber.from(props.bundle.capital);
     const locked = BigNumber.from(props.bundle.locked);
-    const supportedCapacity = BigNumber.from(props.bundle.supportedCapacity);
-    let supportedCapacityRemaining = BigNumber.from(props.bundle.supportedCapacityRemaining ?? 0);
-    const minSumInsured = BigNumber.from(props.bundle.minProtectedAmount);
-    const maxSumInsured = BigNumber.from(props.bundle.maxProtectedAmount);
-    const minDuration = props.bundle.minDuration / 86400;
-    const maxDuration = props.bundle.maxDuration / 86400;
+    // const supportedCapacity = BigNumber.from(props.bundle.supportedCapacity);
+    // let supportedCapacityRemaining = BigNumber.from(props.bundle.supportedCapacityRemaining ?? 0);
+    // const minSumInsured = BigNumber.from(props.bundle.minProtectedAmount);
+    // const maxSumInsured = BigNumber.from(props.bundle.maxProtectedAmount);
+    // const minDuration = props.bundle.minDuration / 86400;
+    // const maxDuration = props.bundle.maxDuration / 86400;
     const createdAtTS = props.bundle.createdAt;
     const endTS = props.bundle.createdAt + BigNumber.from(props.bundle.lifetime).toNumber();
 
-    if (supportedCapacityRemaining.lt(0)) {
-        supportedCapacityRemaining = BigNumber.from(0);
-    }
+    // if (supportedCapacityRemaining.lt(0)) {
+    //     supportedCapacityRemaining = BigNumber.from(0);
+    // }
 
     return (<>
         <Grid container spacing={1} data-testid="bundle-details">
@@ -55,11 +55,11 @@ export default function BundleDetails(props: BundleDetailsProps) {
                     {symbol + " " + formatCurrencyBN(capital, props.decimals)} 
                     <WithTooltip tooltipText={t('capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
-            <NameValue name={t('supported_capital')} value={
+            {/* <NameValue name={t('supported_capital')} value={
                 <>
                     {symbol + " " + formatCurrencyBN(supportedCapital, props.decimals)} 
                     <WithTooltip tooltipText={t('supported_capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
-                </>} />
+                </>} /> */}
             <NameValue name={t('locked')} value={
                 <>
                     {symbol + " " + formatCurrencyBN(locked, props.decimals)}
@@ -70,7 +70,7 @@ export default function BundleDetails(props: BundleDetailsProps) {
                 {symbolProtected + " " + formatCurrencyBN(capacity, props.decimalsProtected)}
                 <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
             </>} />
-            <NameValue name={t('supported_capacity')} value={
+            {/* <NameValue name={t('supported_capacity')} value={
                 <>
                     {symbolProtected + " " + formatCurrencyBN(supportedCapacity, props.decimalsProtected)}
                     <WithTooltip tooltipText={t('supported_capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
@@ -82,7 +82,7 @@ export default function BundleDetails(props: BundleDetailsProps) {
                 </>} />
             <NameValue name={t('min_max_sum_insured')} value={<>{symbolProtected + " " + formatCurrencyBN(minSumInsured, props.decimalsProtected) + " / " + formatCurrencyBN(maxSumInsured, props.decimalsProtected)}</>}/>
             <NameValue name={t('min_max_duration')} value={<>{minDuration + " / " + " " + maxDuration + " " + t('days')}</>}/>
-            <NameValue name={t('apr')} value={<>{props.bundle.apr + " %"}</>}/>
+            <NameValue name={t('apr')} value={<>{props.bundle.apr + " %"}</>}/> */}
             <NameValue name={t('policies')} value={<>{props.bundle.policies.toString()}</>}/>
             <NameValue name={t('owner')} value={<Address address={props.bundle.owner} iconColor="secondary" />}/>
             <NameValue name={t('creation_date')} value={<Timestamp at={createdAtTS} withTime={true} />}/> 

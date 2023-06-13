@@ -92,11 +92,11 @@ export class DepegRiskpoolApi {
         let supportedCapacity = undefined;
         let supportedCapacityRemaining = undefined;
     
-        if (this.stakingApi !== undefined) {
-            capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
-            supportedCapacity = capitalSupport?.mul(this.protectedAmountFactor);
-            supportedCapacityRemaining = minBigNumber(capacity, supportedCapacity);
-        }
+        // if (this.stakingApi !== undefined) {
+        //     capitalSupport = await this.stakingApi.getSupportedCapital(bundleId);
+        //     supportedCapacity = capitalSupport?.mul(this.protectedAmountFactor);
+        //     supportedCapacityRemaining = minBigNumber(capacity, supportedCapacity);
+        // }
 
         return {
             id: bundleId,
@@ -110,9 +110,9 @@ export class DepegRiskpoolApi {
             balance: balance.toString(),
             capital: capital.toString(),
             locked: lockedCapital.toString(),
-            capitalSupport: capitalSupport?.toString(),
-            supportedCapacity: supportedCapacity?.toString(),
-            supportedCapacityRemaining: supportedCapacityRemaining?.toString(),
+            capitalSupport: BigNumber.from(0).toString(),
+            supportedCapacity: BigNumber.from(0).toString(),
+            supportedCapacityRemaining: BigNumber.from(0).toString(),
             capacity: capacity.toString(),
             policies: policies.toNumber(),
             state: state,

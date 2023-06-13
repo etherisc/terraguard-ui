@@ -75,14 +75,14 @@ export default function BundlesListDesktop(props: BundlesProps) {
             valueGetter: (params: GridValueGetterParams) => params.row,
             valueFormatter: (params: GridValueFormatterParams<BundleData>) => formatBundleState(params.value!, t),
         },
-        {
-            field: 'apr',
-            headerName: t('table.header.apr'),
-            flex: 0.3,
-            valueFormatter: (params: GridValueFormatterParams<number>) => {
-                return `${params.value.toFixed(2)}%`
-            }
-        },
+        // {
+        //     field: 'apr',
+        //     headerName: t('table.header.apr'),
+        //     flex: 0.3,
+        //     valueFormatter: (params: GridValueFormatterParams<number>) => {
+        //         return `${params.value.toFixed(2)}%`
+        //     }
+        // },
         { 
             field: 'balance', 
             headerName: t('table.header.balance'), 
@@ -152,32 +152,32 @@ export default function BundlesListDesktop(props: BundlesProps) {
         }
     ];
 
-    if (isStakingSupported) {
-        columns.splice(6, 0, {
-            field: 'stakeUsage', 
-            headerName: t('table.header.stake_usage'), 
-            flex: 0.3,
-            valueGetter: (params: GridValueGetterParams) => {
-                const capitalSupport = params.row.capitalSupport !== undefined ? BigNumber.from(params.row.capitalSupport) : undefined;
-                const lockedCapital = params.row.locked !== undefined ? BigNumber.from(params.row.locked) : BigNumber.from(0);
-                let stakeUsage = calculateStakeUsage(capitalSupport, lockedCapital);
-                return [ stakeUsage, capitalSupport, lockedCapital, props.usd2, props.usd2Decimals ];
-            },
-            renderCell: (params: GridRenderCellParams<[number|undefined, BigNumber, BigNumber, string, number]>) => {
-                const stakeUsage = params.value![0];
-                const supportingAmount = params.value![1];
-                const lockedAmount = params.value![2] !== undefined ? params.value![2] : BigNumber.from(0);
-                return (<StakeUsageIndicator
-                            stakeUsage={stakeUsage}
-                            lockedCapital={lockedAmount}
-                            supportedCapital={supportingAmount}
-                            supportedToken={params.value![3]}
-                            supportedTokenDecimals={params.value![4]}
-                            />);
-            },
-            sortComparator: (v1: [number|undefined, BigNumber, BigNumber, string, number], v2: [number|undefined, BigNumber, BigNumber, string, number]) => (v1[0] ?? -1) - (v2[0] ?? -1),
-        });
-    }
+    // if (isStakingSupported) {
+    //     columns.splice(6, 0, {
+    //         field: 'stakeUsage', 
+    //         headerName: t('table.header.stake_usage'), 
+    //         flex: 0.3,
+    //         valueGetter: (params: GridValueGetterParams) => {
+    //             const capitalSupport = params.row.capitalSupport !== undefined ? BigNumber.from(params.row.capitalSupport) : undefined;
+    //             const lockedCapital = params.row.locked !== undefined ? BigNumber.from(params.row.locked) : BigNumber.from(0);
+    //             let stakeUsage = calculateStakeUsage(capitalSupport, lockedCapital);
+    //             return [ stakeUsage, capitalSupport, lockedCapital, props.usd2, props.usd2Decimals ];
+    //         },
+    //         renderCell: (params: GridRenderCellParams<[number|undefined, BigNumber, BigNumber, string, number]>) => {
+    //             const stakeUsage = params.value![0];
+    //             const supportingAmount = params.value![1];
+    //             const lockedAmount = params.value![2] !== undefined ? params.value![2] : BigNumber.from(0);
+    //             return (<StakeUsageIndicator
+    //                         stakeUsage={stakeUsage}
+    //                         lockedCapital={lockedAmount}
+    //                         supportedCapital={supportingAmount}
+    //                         supportedToken={params.value![3]}
+    //                         supportedTokenDecimals={params.value![4]}
+    //                         />);
+    //         },
+    //         sortComparator: (v1: [number|undefined, BigNumber, BigNumber, string, number], v2: [number|undefined, BigNumber, BigNumber, string, number]) => (v1[0] ?? -1) - (v2[0] ?? -1),
+    //     });
+    // }
 
     function GridToolbar() {
         return (
