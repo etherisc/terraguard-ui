@@ -91,7 +91,7 @@ export default function Header(props: HeaderProps) {
                         </IconButton>
                         <Box sx={{ mr: 4, display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
                             <Typography variant="h5" >Quantectum</Typography>
-                            <Typography variant="h6" sx={{ ml: 1 }}>Terraguard</Typography>
+                            <Typography variant="h5" sx={{ ml: 2 }}>TerraGuard</Typography>
                         </Box>
                         {/* <Box sx={{ pt: 1, display: { xs: 'inherit', md: 'none'}}}>
                             <Link href="https://www.etherisc.com" target="_blank" rel="noreferrer">

@@ -101,8 +101,8 @@ export default function Application(props: ApplicationProps) {
         setReadyToBuy(isFormReady);
     }
 
-    async function applicationSuccessful(bundleId: number) {
-        props.insurance.triggerBundleUpdate(bundleId, dispatch);
+    async function applicationSuccessful() {
+        // props.insurance.triggerBundleUpdate(bundleId, dispatch);
 
         confetti({
             particleCount: 100,
@@ -133,19 +133,19 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function doApplication(walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, bundleId: number, gasless: boolean): Promise<{ status: boolean, processId: string|undefined}> {
+    async function doApplication(walletAddress: string, protectedAmount: BigNumber, locationId: number, protectionType: number, premium: BigNumber): Promise<{ status: boolean, processId: string|undefined}> {
         let snackbar: SnackbarKey | undefined = undefined;
-        const applyMessage = gasless ? t('apply_info_gasless') : t('apply_info');
+        // const applyMessage = gasless ? t('apply_info_gasless') : t('apply_info');
         try {
             return await props.insurance.application.applyForPolicy(
                 walletAddress, 
                 protectedAmount, 
-                coverageDuration, 
-                bundleId, 
-                gasless,
+                protectionType,
+                locationId,
+                premium,
                 (address: string) => {
                     snackbar = enqueueSnackbar(
-                        t(applyMessage, { address }),
+                        t(t('apply_info'), { address }),
                         { variant: "warning", persist: true }
                     );
                 },
@@ -208,7 +208,7 @@ export default function Application(props: ApplicationProps) {
         }
     }
 
-    async function applyForPolicy(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, premium: BigNumber, bundleId: number, gasless: boolean) {
+    async function applyForPolicy(insuredAmount: BigNumber, locationId: number, protectionType: number, premium: BigNumber) {
         ga_event("trx_start_application", { category: 'chain_trx' });
         try {
             enableUnloadWarning(true);
@@ -223,7 +223,7 @@ export default function Application(props: ApplicationProps) {
             }
             ga_event("trx_success_application_approve", { category: 'chain_trx' });
             setActiveStep(4);
-            const applicationResult = await doApplication(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, gasless);
+            const applicationResult = await doApplication(walletAddress, insuredAmount, locationId, protectionType, premium);
             if ( ! applicationResult.status ) {
                 ga_event("trx_fail_application", { category: 'chain_trx' });
                 setActiveStep(2);
@@ -232,8 +232,8 @@ export default function Application(props: ApplicationProps) {
             }
             ga_event("trx_success_application", { category: 'chain_trx' });
             setActiveStep(5);
-            await applicationSuccessful(bundleId);
-            setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDurationSeconds])
+            await applicationSuccessful();
+            // setProctectionDetails([applicationResult.processId as string, walletAddress, insuredAmount, coverageDurationSeconds])
         } finally {
             enableUnloadWarning(false);
         }

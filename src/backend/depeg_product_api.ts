@@ -93,8 +93,9 @@ export class DepegProductApi {
     async applyForDepegPolicy(
         walletAddress: string,
         protectedAmount: BigNumber, 
-        coverageDurationSeconds: number, 
-        bundleId: number, 
+        locationId: number,
+        protectionType: number,
+        premium: BigNumber,
         beforeApplyCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void,
     ): Promise<[ContractTransaction, ContractReceipt]> {
@@ -103,10 +104,10 @@ export class DepegProductApi {
         }
         try {
             const tx = await this.depegProduct!.applyForPolicyWithBundle(
-                walletAddress,
+                protectionType,
+                locationId,
                 protectedAmount, 
-                coverageDurationSeconds,
-                bundleId);
+                premium);
             if (beforeWaitCallback !== undefined) {
                 beforeWaitCallback(this.depegProduct!.address);
             }

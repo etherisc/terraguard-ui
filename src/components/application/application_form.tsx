@@ -1,4 +1,4 @@
-import { faCircleInfo, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -7,29 +7,18 @@ import Grid from '@mui/material/Grid';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import TextField from '@mui/material/TextField';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
-import { BigNumber, ethers } from 'ethers';
-import { formatUnits, parseUnits } from 'ethers/lib/utils';
+import { BigNumber } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from 'react-redux';
 import { ApplicationApi } from '../../backend/backend_api';
-import { BundleData, MAX_BUNDLE } from '../../backend/bundle_data';
 import { REGEX_PATTERN_NUMBER_WITHOUT_DECIMALS } from '../../config/appConfig';
 import { INPUT_VARIANT } from '../../config/theme';
-import { clearPremium, setApplicableBundleIds, setPremium, setPremiumCalculationInProgress, setPremiumErrorKey } from '../../redux/slices/application';
 import { RootState } from '../../redux/store';
-import { filterApplicableBundles } from '../../utils/bundles';
+import { formatCurrencyBN } from "../../utils/numbers";
 import TermsOfService from '../terms_of_service';
-import { AvailableBundleList } from './available_bundle_list';
-import PayoutExample from './payout_example';
-import Premium from './premium';
-import WithTooltip from "../with_tooltip";
-import { Typography } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import { formatCurrency, formatCurrencyBN } from "../../utils/numbers";
 
 export interface ApplicationFormProperties {
     formDisabled: boolean;
@@ -42,16 +31,20 @@ export interface ApplicationFormProperties {
     premiumTrxTextKey: string|undefined;
     hasBalance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     readyToSubmit: (isFormReady: boolean) => void;
-    applyForPolicy: (walletAddress: string, protectedAmount: BigNumber, coverageDuration: number, premium: BigNumber, bundleId: number, gasless: boolean) => void;
+    applyForPolicy: (protectedAmount: BigNumber, locationId: number, protectionType: number, premium: BigNumber) => void;
 }
 
 export type IAplicationFormValues = {
-    insuredWallet: string;
+    // insuredWallet: string;
+    protectionType: number;
     protectedAmount: string;
-    coverageDuration: string;
-    coverageEndDate: Dayjs;
-    gasless: boolean;
+    locationId: number;
+    // coverageDuration: string;
+    // coverageEndDate: Dayjs;
+    // gasless: boolean;
     termsAndConditions: boolean;
+    latitude: number;
+    longitude: number;
 };
 
 export default function ApplicationForm(props: ApplicationFormProperties) {
@@ -74,158 +67,162 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
     const [ protectedAmountMin, setProtectedAmountMin ] = useState(props.applicationApi.protectedAmountMin.toNumber());
     const [ protectedAmountMax, setProtectedAmountMax ] = useState(props.applicationApi.protectedAmountMax.toNumber());
 
-    // coverage period (days and date)
-    const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
-    const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
-    const [ coverageUntilMin, setCoverageUntilMin ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMin, 'days'));
-    const [ coverageUntilMax, setCoverageUntilMax ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'));
+    // // coverage period (days and date)
+    // const [ coverageDaysMin, setCoverageDaysMin ] = useState(props.applicationApi.coverageDurationDaysMin);
+    // const [ coverageDaysMax, setCoverageDaysMax ] = useState(props.applicationApi.coverageDurationDaysMax);
+    // const [ coverageUntilMin, setCoverageUntilMin ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMin, 'days'));
+    // const [ coverageUntilMax, setCoverageUntilMax ] = useState(dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'));
     
     const { handleSubmit, control, formState, getValues, setValue, watch } = useForm<IAplicationFormValues>({ 
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
-            insuredWallet: "",
+            // insuredWallet: "",
             protectedAmount: undefined,
-            coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
-            coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'),
+            locationId: 42,
+            protectionType: 5, // 5+ / 7+
+            // coverageDuration: props.applicationApi.coverageDurationDaysMax.toString(),
+            // coverageEndDate: dayjs().add(props.applicationApi.coverageDurationDaysMax, 'days'),
             termsAndConditions: false,
-            gasless: false, 
+            // gasless: false, 
+            latitude: 0,
+            longitude: 0,
         }
     });
 
     const watchProtectedAmount = watch("protectedAmount");
 
-    // update wallet address when it changes
-    useEffect(() => {
-        setValue("insuredWallet", props.connectedWalletAddress);
-    }, [props.connectedWalletAddress, setValue]);
+    // // update wallet address when it changes
+    // useEffect(() => {
+    //     setValue("insuredWallet", props.connectedWalletAddress);
+    // }, [props.connectedWalletAddress, setValue]);
 
     const errors = useMemo(() => formState.errors, [formState]);
 
-    const validateFormState = useCallback(() => {
-        // console.log("validateFormState");
-        if (formState.touchedFields.protectedAmount === undefined) {
-            console.log("amount not touched, not calculating premium...");
-            return false;
-        }
+    // const validateFormState = useCallback(() => {
+    //     // console.log("validateFormState");
+    //     if (formState.touchedFields.protectedAmount === undefined) {
+    //         console.log("amount not touched, not calculating premium...");
+    //         return false;
+    //     }
 
-        if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.protectedAmount !== undefined) {
-            console.log("Form is invalid, not calculating premium...");
-            return false;
-        }
+    //     if (errors.coverageDuration !== undefined || errors.insuredWallet !== undefined || errors.protectedAmount !== undefined) {
+    //         console.log("Form is invalid, not calculating premium...");
+    //         return false;
+    //     }
 
-        if (bundles.length == 0) {
-            console.log("No bundles, not calculating premium...");
-            return false;
-        }
-        return true;
-    }, [errors, formState.touchedFields.protectedAmount, bundles.length]);
+    //     if (bundles.length == 0) {
+    //         console.log("No bundles, not calculating premium...");
+    //         return false;
+    //     }
+    //     return true;
+    // }, [errors, formState.touchedFields.protectedAmount, bundles.length]);
 
-    const getPremiumParameters = useCallback(() => {
-        // console.log("getPremiumParameters");
-        const values = getValues();
-        const insuredWallet = values.insuredWallet;
-        const protectedAmount = parseUnits(values.protectedAmount ?? "0", props.usd1Decimals);
-        const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-        return { insuredWallet, protectedAmount, coverageSeconds };
-    }, [getValues, props.usd1Decimals]);
+    // const getPremiumParameters = useCallback(() => {
+    //     // console.log("getPremiumParameters");
+    //     const values = getValues();
+    //     const insuredWallet = values.insuredWallet;
+    //     const protectedAmount = parseUnits(values.protectedAmount ?? "0", props.usd1Decimals);
+    //     const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
+    //     return { insuredWallet, protectedAmount, coverageSeconds };
+    // }, [getValues, props.usd1Decimals]);
 
-    const calculatePremium = useCallback(async () => {
-        // console.log("calculatePremium");
-        if ( ! validateFormState()) {
-            console.log("form not valid, not calculating premium");
-            dispatch(setApplicableBundleIds(undefined));
-            dispatch(clearPremium());
-            return;
-        }
+    // const calculatePremium = useCallback(async () => {
+    //     // console.log("calculatePremium");
+    //     if ( ! validateFormState()) {
+    //         console.log("form not valid, not calculating premium");
+    //         dispatch(setApplicableBundleIds(undefined));
+    //         dispatch(clearPremium());
+    //         return;
+    //     }
         
-        dispatch(setPremiumCalculationInProgress(true));
-        dispatch(clearPremium());
-        try {
-            const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
-            // filter bundles matching application
-            const fbid = filterApplicableBundles(bundles, protectedAmount, coverageSeconds).map(b => b.id);
-            dispatch(setApplicableBundleIds(fbid));
-            console.log("fbid", fbid);
+    //     dispatch(setPremiumCalculationInProgress(true));
+    //     dispatch(clearPremium());
+    //     try {
+    //         const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
+    //         // filter bundles matching application
+    //         const fbid = filterApplicableBundles(bundles, protectedAmount, coverageSeconds).map(b => b.id);
+    //         dispatch(setApplicableBundleIds(fbid));
+    //         console.log("fbid", fbid);
 
-            if (fbid.length == 0) {
-                return;
-            }
+    //         if (fbid.length == 0) {
+    //             return;
+    //         }
             
-            const remainingBundles = bundles.filter((b: BundleData) => fbid.includes(b.id));
-            console.log("remainingBundles", remainingBundles);
+    //         const remainingBundles = bundles.filter((b: BundleData) => fbid.includes(b.id));
+    //         console.log("remainingBundles", remainingBundles);
 
-            // select the bundle with the lowest APR
-            const bestBundle = remainingBundles.reduce((prev: BundleData, current: BundleData) => prev.apr < current.apr ? prev : current, MAX_BUNDLE);
-            console.log("bestBundle", bestBundle);
+    //         // select the bundle with the lowest APR
+    //         const bestBundle = remainingBundles.reduce((prev: BundleData, current: BundleData) => prev.apr < current.apr ? prev : current, MAX_BUNDLE);
+    //         console.log("bestBundle", bestBundle);
 
-            // calculate premium
-            const calculatedPremium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bestBundle);
-            console.log("premium", calculatedPremium.toString());
-            dispatch(setPremium([bestBundle.id, calculatedPremium.toString()]));
+    //         // calculate premium
+    //         const calculatedPremium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bestBundle);
+    //         console.log("premium", calculatedPremium.toString());
+    //         dispatch(setPremium([bestBundle.id, calculatedPremium.toString()]));
 
-            // and finally check if the wallet has enough balance
-            const walletBalanceSufficient = await hasBalance(insuredWallet, calculatedPremium);
-            console.log("walletBalanceSufficient", calculatedPremium, walletBalanceSufficient);
-            if (! walletBalanceSufficient) {
-                dispatch(setPremiumErrorKey("error_wallet_balance_too_low"));
-            } else {
-                dispatch(setPremiumErrorKey(undefined));
-            }
-        } catch (e) {
-            console.log(e);
-            dispatch(setPremiumErrorKey("error_calculating_premium"));
-        } finally {
-            dispatch(setPremiumCalculationInProgress(false));
-        }
-    }, [validateFormState, dispatch, getPremiumParameters, bundles, props.applicationApi, hasBalance]);
+    //         // and finally check if the wallet has enough balance
+    //         const walletBalanceSufficient = await hasBalance(insuredWallet, calculatedPremium);
+    //         console.log("walletBalanceSufficient", calculatedPremium, walletBalanceSufficient);
+    //         if (! walletBalanceSufficient) {
+    //             dispatch(setPremiumErrorKey("error_wallet_balance_too_low"));
+    //         } else {
+    //             dispatch(setPremiumErrorKey(undefined));
+    //         }
+    //     } catch (e) {
+    //         console.log(e);
+    //         dispatch(setPremiumErrorKey("error_calculating_premium"));
+    //     } finally {
+    //         dispatch(setPremiumCalculationInProgress(false));
+    //     }
+    // }, [validateFormState, dispatch, getPremiumParameters, bundles, props.applicationApi, hasBalance]);
 
-    //-------------------------------------------------------------------------
-    // update min/max sum insured and coverage period when bundles are available
-    useEffect(() => {
-        if (bundles.length > 0) {
-            let minSumInsured = BigNumber.from(Number.MAX_SAFE_INTEGER - 1);
-            let maxSumInsured = BigNumber.from(0);
-            let minCoverageSecs = Number.MAX_SAFE_INTEGER;
-            let maxCoverageSecs = 0;
-            for( let b of bundles) {
-                const bminSumInsured = BigNumber.from(b.minProtectedAmount);
-                const bmaxSumInsured = BigNumber.from(b.maxProtectedAmount);
+    // //-------------------------------------------------------------------------
+    // // update min/max sum insured and coverage period when bundles are available
+    // useEffect(() => {
+    //     if (bundles.length > 0) {
+    //         let minSumInsured = BigNumber.from(Number.MAX_SAFE_INTEGER - 1);
+    //         let maxSumInsured = BigNumber.from(0);
+    //         let minCoverageSecs = Number.MAX_SAFE_INTEGER;
+    //         let maxCoverageSecs = 0;
+    //         for( let b of bundles) {
+    //             const bminSumInsured = BigNumber.from(b.minProtectedAmount);
+    //             const bmaxSumInsured = BigNumber.from(b.maxProtectedAmount);
 
-                if (bminSumInsured.lt(minSumInsured)) {
-                    minSumInsured = bminSumInsured;
-                }
-                if (bmaxSumInsured.gt(maxSumInsured)) {
-                    maxSumInsured = bmaxSumInsured;
-                }
-                if (b.minDuration < minCoverageSecs) {
-                    minCoverageSecs = b.minDuration;
-                }
-                if (b.maxDuration > maxCoverageSecs) {
-                    maxCoverageSecs = b.maxDuration;
-                }
-            }
-            setProtectedAmountMin(parseInt(formatUnits(minSumInsured, props.usd1Decimals)));
-            setProtectedAmountMax(parseInt(formatUnits(maxSumInsured, props.usd1Decimals)));
-            const minCoverageDays = minCoverageSecs / 86400;
-            const maxCoverageDays = maxCoverageSecs / 86400;
-            setCoverageDaysMin(minCoverageDays);
-            setCoverageDaysMax(maxCoverageDays);
-            const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
-            setValue("coverageDuration", coverageDays.toString());
-            setValue("coverageEndDate", dayjs().add(coverageDays, 'days'));
-            setCoverageUntilMin(dayjs().add(minCoverageDays, 'days'));
-            setCoverageUntilMax(dayjs().add(maxCoverageDays, 'days'));
+    //             if (bminSumInsured.lt(minSumInsured)) {
+    //                 minSumInsured = bminSumInsured;
+    //             }
+    //             if (bmaxSumInsured.gt(maxSumInsured)) {
+    //                 maxSumInsured = bmaxSumInsured;
+    //             }
+    //             if (b.minDuration < minCoverageSecs) {
+    //                 minCoverageSecs = b.minDuration;
+    //             }
+    //             if (b.maxDuration > maxCoverageSecs) {
+    //                 maxCoverageSecs = b.maxDuration;
+    //             }
+    //         }
+    //         setProtectedAmountMin(parseInt(formatUnits(minSumInsured, props.usd1Decimals)));
+    //         setProtectedAmountMax(parseInt(formatUnits(maxSumInsured, props.usd1Decimals)));
+    //         const minCoverageDays = minCoverageSecs / 86400;
+    //         const maxCoverageDays = maxCoverageSecs / 86400;
+    //         setCoverageDaysMin(minCoverageDays);
+    //         setCoverageDaysMax(maxCoverageDays);
+    //         const coverageDays = maxCoverageDays < 30 ? maxCoverageDays : 30;
+    //         setValue("coverageDuration", coverageDays.toString());
+    //         setValue("coverageEndDate", dayjs().add(coverageDays, 'days'));
+    //         setCoverageUntilMin(dayjs().add(minCoverageDays, 'days'));
+    //         setCoverageUntilMax(dayjs().add(maxCoverageDays, 'days'));
 
-        }
-    }, [bundles, props.usd1Decimals, setValue]);
+    //     }
+    // }, [bundles, props.usd1Decimals, setValue]);
 
-    const switchBundle = useCallback(async (bundle: BundleData) => {
-        const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
-        const premium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bundle);
-        console.log("premium", premium.toString());
-        dispatch(setPremium([bundle.id, premium.toString()]));    
-    }, [getPremiumParameters, props.applicationApi, dispatch]);
+    // const switchBundle = useCallback(async (bundle: BundleData) => {
+    //     const { insuredWallet, protectedAmount, coverageSeconds } = getPremiumParameters();
+    //     const premium = await props.applicationApi.calculatePremium(insuredWallet, protectedAmount, coverageSeconds, bundle);
+    //     console.log("premium", premium.toString());
+    //     dispatch(setPremium([bundle.id, premium.toString()]));    
+    // }, [getPremiumParameters, props.applicationApi, dispatch]);
 
     const [ applicationInProgress, setApplicationInProgress ] = useState(false);
 
@@ -235,17 +232,19 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
 
         try {
             const values = getValues();
-            const walletAddress = values.insuredWallet;
+            // const walletAddress = values.insuredWallet;
             const protectedAmountWei = parseUnits(values.protectedAmount, props.usd1Decimals);
-            const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
-            const gasless = values.gasless;
-            props.applyForPolicy(walletAddress, protectedAmountWei, coverageSeconds, BigNumber.from(premium), selectedBundleId!, gasless);
+            // const coverageSeconds = parseInt(values.coverageDuration) * 24 * 60 * 60;
+            // const gasless = values.gasless;
+            const protectionType = values.protectionType;
+            const locationId = values.locationId;
+            props.applyForPolicy(protectedAmountWei, protectionType, locationId, parseUnits("10", 6));
         } finally {
             setApplicationInProgress(false);
         }
     }
 
-    const readyToSubmit = formState.isValid && ! premiumCalculationInProgress && ! props.formDisabled && selectedBundleId !== undefined && premiumErrorKey === undefined;
+    const readyToSubmit = formState.isValid && ! props.formDisabled;
     props.readyToSubmit(readyToSubmit);
     
     const loadingBar = applicationInProgress ? <LinearProgress /> : null;
@@ -255,7 +254,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
         <form onSubmit={handleSubmit(onSubmit)}>
             <Grid container maxWidth={{ 'xs': 'none', 'md': 'md'}} spacing={4} mt={{ 'xs': 0, 'md': 2 }} 
                 sx={{ p: 1, ml: { 'xs': 'none', 'md': 'auto'}, mr: { 'xs': 'none', 'md': 'auto'} }} >
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Controller
                         name="insuredWallet"
                         control={control}
@@ -296,8 +295,38 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 data-testid="insuredWallet"
                                 />}
                         />
+                </Grid> */}
+                <Grid item xs={6}>
+                    <Controller
+                        name="protectionType"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => 
+                            <TextField 
+                                label="Protection type"
+                                fullWidth
+                                disabled={props.formDisabled}
+                                variant={INPUT_VARIANT}
+                                {...field} 
+                                // InputProps={{
+                                //     startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
+                                // }}
+                                // onBlur={async (e) => { 
+                                //     field.onBlur();
+                                //     await calculatePremium();
+                                // }}
+                                // error={errors.protectedAmount !== undefined}
+                                // helperText={errors.protectedAmount !== undefined 
+                                //     ? ( errors.protectedAmount.type == 'pattern' 
+                                //             ? t(`error.field.amountType`, { "ns": "common"}) 
+                                //             : t(`error.field.${errors.protectedAmount.type}`, { "ns": "common", "minValue": `${props.usd1} ${protectedAmountMin}`, "maxValue": `${props.usd1} ${protectedAmountMax}` })
+                                //     ) : t('protected_amount_helper', { currency: walletUsd1Balance?.currency, balance: formatCurrencyBN(walletUsd1BalanceBN, walletUsd1Balance.decimals)})
+                                // }
+                                // data-testid="protected-amount"
+                                />}
+                        />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                     <Controller
                         name="protectedAmount"
                         control={control}
@@ -312,10 +341,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">{props.usd1}</InputAdornment>,
                                 }}
-                                onBlur={async (e) => { 
-                                    field.onBlur();
-                                    await calculatePremium();
-                                }}
+                                // onBlur={async (e) => { 
+                                //     field.onBlur();
+                                //     await calculatePremium();
+                                // }}
                                 error={errors.protectedAmount !== undefined}
                                 helperText={errors.protectedAmount !== undefined 
                                     ? ( errors.protectedAmount.type == 'pattern' 
@@ -327,7 +356,37 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                 />}
                         />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item md={6}>
+                    <Controller
+                        name="latitude"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) =>
+                            <TextField
+                                label="Latitude"
+                                fullWidth
+                                disabled={props.formDisabled}
+                                variant={INPUT_VARIANT}
+                                {...field}
+                            />}
+                    />
+                </Grid>        
+                <Grid item md={6}>
+                    <Controller
+                        name="longitude"
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) =>
+                            <TextField
+                                label="Longitude"
+                                fullWidth
+                                disabled={props.formDisabled}
+                                variant={INPUT_VARIANT}
+                                {...field}
+                            />}
+                    />
+                </Grid>        
+                {/* <Grid item xs={12} md={6}>
                     <Controller
                         name="coverageDuration"
                         control={control}
@@ -416,9 +475,9 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                         transactionInProgress={premiumCalculationInProgress}
                         trxTextKey={props.premiumTrxTextKey || 'premium_calculation_in_progress'}
                         />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} >
-                    { process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION === 'true' &&
+                    {/* { process.env.NEXT_PUBLIC_FEATURE_GASLESS_TRANSACTION === 'true' &&
                         <Controller
                             name="gasless"
                             control={control}
@@ -437,7 +496,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                                     </>}
                                     />
                             } /> 
-                    }
+                    } */}
                     <Controller
                         name="termsAndConditions"
                         control={control}

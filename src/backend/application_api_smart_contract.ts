@@ -115,29 +115,30 @@ export class ApplicationApiSmartContract implements ApplicationApi {
     async applyForPolicy(
             walletAddress: string, 
             protectedAmount: BigNumber, 
-            coverageDurationSeconds: number,
-            bundleId: number,
-            gasless: boolean,
+            locationId: number,
+            prottionType: number,
+            premium: BigNumber,
             beforeApplyCallback?: (address: string) => void,
             beforeWaitCallback?: (address: string) => void,
         ): Promise<{ status: boolean, processId: string|undefined}> {
-        if (gasless) {
-            return await this.applicationGasless!.applyForPolicyGasless(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
-        } else {
-            return await this.applyForPolicyOnChain(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
-        }
+        // if (gasless) {
+        //     return await this.applicationGasless!.applyForPolicyGasless(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
+        // } else {
+            return await this.applyForPolicyOnChain(walletAddress, protectedAmount, locationId, prottionType, premium, beforeApplyCallback, beforeWaitCallback);
+        // }
     }
 
     async applyForPolicyOnChain(
         walletAddress: string, 
         protectedAmount: BigNumber, 
-        coverageDurationSeconds: number,
-        bundleId: number,
+        locationId: number,
+        protectionType: number,
+        premium: BigNumber,
         beforeApplyCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void,
     ): Promise<{ status: boolean, processId: string|undefined}> {
-        console.log("applyForPolicyOnChain", walletAddress, protectedAmount, coverageDurationSeconds, bundleId);
-        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
+        console.log("applyForPolicyOnChain", walletAddress, protectedAmount);
+        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, protectedAmount, locationId, protectionType, premium, beforeApplyCallback, beforeWaitCallback);
         const processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
         return {
