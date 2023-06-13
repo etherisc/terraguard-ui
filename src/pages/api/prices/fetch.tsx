@@ -10,7 +10,7 @@ import { clearAllPrices } from "./clear";
 import { Price, PRICE_SCHEMA } from "./redis_price_objects";
 import { isIpAllowedToConnect } from "../../../utils/check_ip";
 
-const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
+const depegProductContractAddress = process.env.NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS ?? "0x0";
 
 /**
  * Fetch new prices from chainlink and save them to redis. 

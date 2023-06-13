@@ -24,7 +24,7 @@ export default async function handler(
     const productOwnerSigner: Signer = getProductOwnerSigner();
 
     const latestBlockNumber = await productOwnerSigner.provider!.getBlockNumber();
-    const depegProduct = DepegProduct__factory.connect(process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "", productOwnerSigner);
+    const depegProduct = DepegProduct__factory.connect(process.env.NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS ?? "", productOwnerSigner);
     await depegProduct.setDepeggedBlockNumber(latestBlockNumber, formatBytes32String('Depegged'));
 
     await redisClient.set("fake-depeg-block-number", latestBlockNumber);

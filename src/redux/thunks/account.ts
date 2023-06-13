@@ -18,7 +18,7 @@ export const fetchBalances = createAsyncThunk(
             decimals: 18,
         } as Amount;
 
-        const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
+        const depegProductContractAddress = process.env.NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS;
         const depegProduct = DepegProduct__factory.connect(depegProductContractAddress!, signer);
         const myAddress = await signer.getAddress();
 

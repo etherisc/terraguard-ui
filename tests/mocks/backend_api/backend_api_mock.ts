@@ -176,30 +176,30 @@ const bundles = [
 
 function applicationMock() {
     return {
-        protectedAmountMin: BigNumber.from(1000),
-        protectedAmountMax: BigNumber.from(2000),
-        coverageDurationDaysMin: 14,
-        coverageDurationDaysMax: 45,
-        getRiskBundles(handleBundle: (bundle: BundleData) => void) {
-        },
-        fetchStakeableRiskBundles(handleBundle) {
-        },
-        calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
-            return Promise.resolve(insuredAmount.div(10));
-        },
-        async applyForPolicy(walletAddress, insuredAmount, coverageDurationSeconds, bundleId, gasless: boolean) {
-            await delay(2000);
-            return Promise.resolve({ status: true, processId: "0x12345678"});
-        },
-        lastBlockTimestamp(): Promise<number> {
-            return Promise.resolve(dayjs().unix());
-        },
-        getProductComponentState() {
-            return Promise.resolve(ComponentState.Active);
-        },
-        fetchPending(walletAddress, handlePending) {
-            return Promise.resolve();
-        },
+        // protectedAmountMin: BigNumber.from(1000),
+        // protectedAmountMax: BigNumber.from(2000),
+        // coverageDurationDaysMin: 14,
+        // coverageDurationDaysMax: 45,
+        // getRiskBundles(handleBundle: (bundle: BundleData) => void) {
+        // },
+        // fetchStakeableRiskBundles(handleBundle) {
+        // },
+        // calculatePremium(walletAddress: string, insuredAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
+        //     return Promise.resolve(insuredAmount.div(10));
+        // },
+        // async applyForPolicy(walletAddress, insuredAmount, lat, long, protectionType, locationId) {
+        //     await delay(2000);
+        //     return Promise.resolve({ status: true, processId: "0x12345678"});
+        // },
+        // lastBlockTimestamp(): Promise<number> {
+        //     return Promise.resolve(dayjs().unix());
+        // },
+        // getProductComponentState() {
+        //     return Promise.resolve(ComponentState.Active);
+        // },
+        // fetchPending(walletAddress, handlePending) {
+        //     return Promise.resolve();
+        // },
     } as ApplicationApi;
 }
 
@@ -208,97 +208,97 @@ function bundleManagementMock(
     bundleCapitalCap: BigNumber = parseUnits("2500", 6),
 ) {
     return {
-        usd1: 'USDC',
-        minLifetime: 14,
-        maxLifetime: 180,
-        minStakedAmount: BigNumber.from(400),
-        maxStakedAmount: BigNumber.from(10000),
-        minProtectedAmount: BigNumber.from(2000),
-        maxProtectedAmount: BigNumber.from(100000),
-        minProtectionDuration: 14,
-        maxProtectionDuration: 120,
-        annualPctReturn: 5,
-        maxAnnualPctReturn: 15,
-        isRiskpoolCapacityAvailable() {
-            return Promise.resolve(true);
-        },
-        riskpoolRemainingCapacity() {
-            return Promise.resolve(remainingRiskpoolCapacity);
-        },
-        async isAllowAllAccountsEnabled(): Promise<boolean> {
-            return Promise.resolve(true);
-        },
-        isInvestorWhitelisted(walletAddress: string) {
-            return Promise.resolve(true);
-        },
-        async stake(
-            name: string,
-            lifetime: number,
-            investorWalletAddress: string, 
-            investedAmount: BigNumber, 
-            minSumInsured: BigNumber, 
-            maxSumInsured: BigNumber, 
-            minDuration: number, 
-            maxDuration: number, 
-            annualPctReturn: number
-        ): Promise<{ status: boolean, bundleId: string | undefined}> {
-            await delay(2000);
-            return Promise.resolve({ status: true, bundleId: "42"});
-        },
-        fetchAllBundles(handleBundle: (bundle: BundleData) => void) {
-            bundles.forEach(handleBundle);
-            return Promise.resolve();
-        },
-        bundleTokenAddress(): Promise<string> {
-            return Promise.resolve("0x0000000000000000000000000000000000000000");
-        },
-        bundleCount(): Promise<number> {
-            return Promise.resolve(2);
-        },
-        bundleId(idx) {
-            return Promise.resolve(idx);
-        },
-        bundle(bundleId: number, walletAddress: string): Promise<BundleData|undefined> {
-            return Promise.resolve(undefined);
-        },
-        maxBundles(): Promise<number> {
-            return Promise.resolve(100);
-        },
-        activeBundles(): Promise<number> {
-            return Promise.resolve(2);
-        },
-        async lockBundle(bundleId: number): Promise<boolean> {
-            return Promise.resolve(true);
-        },
-        async unlockBundle(bundleId: number): Promise<boolean> {
-            return Promise.resolve(true);
-        },
-        async closeBundle(bundleId: number): Promise<boolean> {
-            return Promise.resolve(true);
-        },
-        async burnBundle(bundleId: number): Promise<boolean> {
-            return Promise.resolve(true);
-        },
-        async withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
-            return Promise.resolve(true);
-        },
-        async fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
-            return Promise.resolve(true);
-        },
-        getBundleCapitalCap(): Promise<BigNumber> {
-            return Promise.resolve(bundleCapitalCap);
-        },
-        getBundleLifetimeMin(): Promise<number> {
-            return Promise.resolve(14 * 24 * 60 * 60);
-        },
-        getBundleLifetimeMax(): Promise<number> {
-            return Promise.resolve(180 * 24 * 60 * 60);
-        },
-        async getProtectedAmountFactor(): Promise<number> {
-            return Promise.resolve(5);
-        },
-        getRiskpoolComponentState() {
-            return Promise.resolve(ComponentState.Active);
-        },
+        // usd1: 'USDC',
+        // minLifetime: 14,
+        // maxLifetime: 180,
+        // minStakedAmount: BigNumber.from(400),
+        // maxStakedAmount: BigNumber.from(10000),
+        // minProtectedAmount: BigNumber.from(2000),
+        // maxProtectedAmount: BigNumber.from(100000),
+        // minProtectionDuration: 14,
+        // maxProtectionDuration: 120,
+        // annualPctReturn: 5,
+        // maxAnnualPctReturn: 15,
+        // isRiskpoolCapacityAvailable() {
+        //     return Promise.resolve(true);
+        // },
+        // riskpoolRemainingCapacity() {
+        //     return Promise.resolve(remainingRiskpoolCapacity);
+        // },
+        // async isAllowAllAccountsEnabled(): Promise<boolean> {
+        //     return Promise.resolve(true);
+        // },
+        // isInvestorWhitelisted(walletAddress: string) {
+        //     return Promise.resolve(true);
+        // },
+        // async stake(
+        //     name: string,
+        //     lifetime: number,
+        //     investorWalletAddress: string, 
+        //     investedAmount: BigNumber, 
+        //     minSumInsured: BigNumber, 
+        //     maxSumInsured: BigNumber, 
+        //     minDuration: number, 
+        //     maxDuration: number, 
+        //     annualPctReturn: number
+        // ): Promise<{ status: boolean, bundleId: string | undefined}> {
+        //     await delay(2000);
+        //     return Promise.resolve({ status: true, bundleId: "42"});
+        // },
+        // fetchAllBundles(handleBundle: (bundle: BundleData) => void) {
+        //     bundles.forEach(handleBundle);
+        //     return Promise.resolve();
+        // },
+        // bundleTokenAddress(): Promise<string> {
+        //     return Promise.resolve("0x0000000000000000000000000000000000000000");
+        // },
+        // bundleCount(): Promise<number> {
+        //     return Promise.resolve(2);
+        // },
+        // bundleId(idx) {
+        //     return Promise.resolve(idx);
+        // },
+        // bundle(bundleId: number, walletAddress: string): Promise<BundleData|undefined> {
+        //     return Promise.resolve(undefined);
+        // },
+        // maxBundles(): Promise<number> {
+        //     return Promise.resolve(100);
+        // },
+        // activeBundles(): Promise<number> {
+        //     return Promise.resolve(2);
+        // },
+        // async lockBundle(bundleId: number): Promise<boolean> {
+        //     return Promise.resolve(true);
+        // },
+        // async unlockBundle(bundleId: number): Promise<boolean> {
+        //     return Promise.resolve(true);
+        // },
+        // async closeBundle(bundleId: number): Promise<boolean> {
+        //     return Promise.resolve(true);
+        // },
+        // async burnBundle(bundleId: number): Promise<boolean> {
+        //     return Promise.resolve(true);
+        // },
+        // async withdrawBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        //     return Promise.resolve(true);
+        // },
+        // async fundBundle(bundleId: number, amount: BigNumber): Promise<boolean> {
+        //     return Promise.resolve(true);
+        // },
+        // getBundleCapitalCap(): Promise<BigNumber> {
+        //     return Promise.resolve(bundleCapitalCap);
+        // },
+        // getBundleLifetimeMin(): Promise<number> {
+        //     return Promise.resolve(14 * 24 * 60 * 60);
+        // },
+        // getBundleLifetimeMax(): Promise<number> {
+        //     return Promise.resolve(180 * 24 * 60 * 60);
+        // },
+        // async getProtectedAmountFactor(): Promise<number> {
+        //     return Promise.resolve(5);
+        // },
+        // getRiskpoolComponentState() {
+        //     return Promise.resolve(ComponentState.Active);
+        // },
     } as BundleManagementApi;
 };

@@ -3,7 +3,7 @@
   "version": "1.1.17",
   "private": true,
   "scripts": {
-    "postinstall": "$npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes && $npm_execpath run typechainTerraguardTypes",
+    "postinstall": "rm -r src/contracts/ && $npm_execpath run typechainDepegTypes && $npm_execpath run typechainRegistryTypes && $npm_execpath run typechainChainlinkTypes && $npm_execpath run typechainTerraguardTypes",
     "dev": "next dev",
     "prebuild": "./extract_version.sh",
     "build": "next build",
@@ -67,7 +67,7 @@
     "@chainlink/contracts": "^0.6.1",
     "@etherisc/depeg-contracts": "1.1.0",
     "@etherisc/registry-contracts": "1.1.0",
-    "@etherisc/terraguard-poc-contracts": "0.0.2-0b66c16",
+    "@etherisc/terraguard-poc-contracts": "0.0.2-4013bc9",
     "@hookform/devtools": "^4.3.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",

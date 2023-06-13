@@ -29,7 +29,7 @@ export default async function handler(
         return;
     }
 
-    const depegProduct = DepegProduct__factory.connect(process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "", productOwnerSigner);
+    const depegProduct = DepegProduct__factory.connect(process.env.NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS ?? "", productOwnerSigner);
     const instanceService = await getInstanceService(await depegProduct.getRegistry(), productOwnerSigner);
     const usd2 = ERC20__factory.connect(await depegProduct.getToken(), productOwnerSigner);
 

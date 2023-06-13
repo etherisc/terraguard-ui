@@ -98,23 +98,26 @@ export class ApplicationApiSmartContract implements ApplicationApi {
     }   
 
     async calculatePremium(walletAddress: string, protectedAmount: BigNumber, coverageDurationSeconds: number, bundle: BundleData): Promise<BigNumber> {
-        console.log("calculatePremium", walletAddress, protectedAmount.toNumber(), coverageDurationSeconds);
-        const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
+        // console.log("calculatePremium", walletAddress, protectedAmount.toNumber(), coverageDurationSeconds);
+        // const depegProduct = (await this.getDepegProductApi())!.getDepegProduct();
         
-        const protectedAmountFactor = (await this.riskpoolApi()).getProtectedAmountFactor();
-        const sumInsured = protectedAmount.div(protectedAmountFactor);
+        // const protectedAmountFactor = (await this.riskpoolApi()).getProtectedAmountFactor();
+        // const sumInsured = protectedAmount.div(protectedAmountFactor);
         
-        // the premium is calculated in the smart contract based on the sum insured (and not the protected amount)
-        const netPremium = (await depegProduct.calculateNetPremium(sumInsured, coverageDurationSeconds, bundle.id));
-        console.log("netPremium", netPremium);
-        const premium = (await depegProduct.calculatePremium(netPremium));
-        console.log("premium", premium.toNumber());
-        return premium;
+        // // the premium is calculated in the smart contract based on the sum insured (and not the protected amount)
+        // // const netPremium = (await depegProduct.calculateNetPremium(sumInsured, coverageDurationSeconds, bundle.id));
+        // console.log("netPremium", netPremium);
+        // // const premium = (await depegProduct.calculatePremium(netPremium));
+        // console.log("premium", premium.toNumber());
+        // return premium;
+        return BigNumber.from(0);
     }
 
     async applyForPolicy(
             walletAddress: string, 
             protectedAmount: BigNumber, 
+            latitude: number,
+            longitude: number,
             locationId: number,
             prottionType: number,
             premium: BigNumber,
@@ -124,13 +127,15 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         // if (gasless) {
         //     return await this.applicationGasless!.applyForPolicyGasless(walletAddress, protectedAmount, coverageDurationSeconds, bundleId, beforeApplyCallback, beforeWaitCallback);
         // } else {
-            return await this.applyForPolicyOnChain(walletAddress, protectedAmount, locationId, prottionType, premium, beforeApplyCallback, beforeWaitCallback);
+            return await this.applyForPolicyOnChain(walletAddress, protectedAmount, latitude, longitude, locationId, prottionType, premium, beforeApplyCallback, beforeWaitCallback);
         // }
     }
 
     async applyForPolicyOnChain(
         walletAddress: string, 
         protectedAmount: BigNumber, 
+        latitude: number,
+        longitude: number,
         locationId: number,
         protectionType: number,
         premium: BigNumber,
@@ -138,7 +143,7 @@ export class ApplicationApiSmartContract implements ApplicationApi {
         beforeWaitCallback?: (address: string) => void,
     ): Promise<{ status: boolean, processId: string|undefined}> {
         console.log("applyForPolicyOnChain", walletAddress, protectedAmount);
-        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, protectedAmount, locationId, protectionType, premium, beforeApplyCallback, beforeWaitCallback);
+        const [tx, receipt] = await (await this.getDepegProductApi())!.applyForDepegPolicy(walletAddress, protectedAmount, locationId, latitude, longitude, protectionType, premium, beforeApplyCallback, beforeWaitCallback);
         const processId = (await this.getDepegProductApi())!.extractProcessIdFromApplicationLogs(receipt.logs);
         console.log(`processId: ${processId}`);
         return {

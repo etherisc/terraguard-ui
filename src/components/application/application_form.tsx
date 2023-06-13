@@ -33,7 +33,7 @@ export interface ApplicationFormProperties {
     premiumTrxTextKey: string|undefined;
     hasBalance: (walletAddress: string, amount: BigNumber) => Promise<boolean>;
     readyToSubmit: (isFormReady: boolean) => void;
-    applyForPolicy: (protectedAmount: BigNumber, locationId: number, protectionType: number, premium: BigNumber) => void;
+    applyForPolicy: (protectedAmount: BigNumber, latitude: number, longitude: number, locationId: number, protectionType: number, premium: BigNumber) => void;
 }
 
 export type IAplicationFormValues = {
@@ -240,8 +240,10 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
             // const gasless = values.gasless;
             const protectionType = values.protectionType;
             const locationId = values.locationId;
+            const longitude = values.longitude;
+            const latitude = values.latitude;
             const premium = protectedAmountWei.div(20);
-            props.applyForPolicy(protectedAmountWei, protectionType, locationId, premium);
+            props.applyForPolicy(protectedAmountWei, latitude, longitude, protectionType, locationId, premium);
         } finally {
             setApplicationInProgress(false);
         }

@@ -20,8 +20,8 @@ export class DepegRiskpoolApi {
     private riskpoolId: number;
     private instanceService: IInstanceService;
     private stakingApi?: StakingApi;
-    private minBundleLifetime = -1;
-    private maxBundleLifetime = -1;
+    // private minBundleLifetime = -1;
+    // private maxBundleLifetime = -1;
     // assume 100k usdc as default - will be overwritten by contract
     private bundleCap = BigNumber.from(100000000000).toString();
     // assume 1m usdc as default - will be overwritten by contract
@@ -52,8 +52,8 @@ export class DepegRiskpoolApi {
             await this.stakingApi.initialize();
         }
 
-        this.minBundleLifetime = (await this.depegRiskpool.MIN_BUNDLE_LIFETIME()).toNumber();
-        this.maxBundleLifetime = (await this.depegRiskpool.MAX_BUNDLE_LIFETIME()).toNumber();
+        // this.minBundleLifetime = (await this.depegRiskpool.MIN_BUNDLE_LIFETIME()).toNumber();
+        // this.maxBundleLifetime = (await this.depegRiskpool.MAX_BUNDLE_LIFETIME()).toNumber();
         this.bundleCap = (await this.depegRiskpool.getBundleCapitalCap()).toString();
         this.riskpoolCap = (await this.depegRiskpool.getRiskpoolCapitalCap()).toString();
         this.protectedAmountFactor = 100 / (await this.depegRiskpool.getSumInsuredPercentage()).toNumber();
@@ -425,11 +425,12 @@ export class DepegRiskpoolApi {
     }
 
     getBundleLifetimeMin(): number {
-        return this.minBundleLifetime;
+        // return this.minBundleLifetime;
+        return 90 * 24 * 60 * 60;
     }
 
     getBundleLifetimeMax(): number {
-        return this.maxBundleLifetime;
+        return 365 * 24 * 60 * 60;
     }
 
     async isAllowAllAccountsEnabled(): Promise<boolean> {

@@ -40,7 +40,7 @@ The docker image `redis/redis-stack` can be used to run a redis instance with th
 
 ### Deployed contracts
 
-The application expects that the `depeg-contracts` are deployed to the blockchain. Use the two environment variables `NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS` and `NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS` to specify the addresses of the depeg product and staking contracts.
+The application expects that the `depeg-contracts` are deployed to the blockchain. Use the two environment variables `NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS` and `NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS` to specify the addresses of the depeg product and staking contracts.
 The expected version of the contracts can be found in the `package.json` file (look for the package `@etherisc/depeg-contracts`).
 
 ### IP Access limit
@@ -74,7 +74,7 @@ NEXT_PUBLIC_CHAIN_TOKEN_FAUCET_URL=https://faucet.polygon.technology/
 #BACKEND_CHAIN_RPC_URL=https://polygon-testnet-rpc.allthatnode.com:8545
 
 # Depeg configuration
-NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS=0x5930513a430E4D0171870aAe73c1e70edcc1917d
+NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS=0x5930513a430E4D0171870aAe73c1e70edcc1917d
 NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS=0xe360b8B3abd807e7b02eCaCd8DfA083cFF0f4941
 NEXT_PUBLIC_DEPEG_USD1=USDC
 NEXT_PUBLIC_DEPEG_USD1_DECIMALS=6

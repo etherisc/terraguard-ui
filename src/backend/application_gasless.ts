@@ -10,7 +10,7 @@ export class ApplicationGasless {
     private signer: Signer;
 
     constructor(signer: Signer) {
-        this.depegProductAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
+        this.depegProductAddress = process.env.NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS;
         this.chainId = toHex(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1"));
         this.signer = signer;
     }

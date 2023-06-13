@@ -95,6 +95,8 @@ export class DepegProductApi {
         walletAddress: string,
         protectedAmount: BigNumber, 
         locationId: number,
+        latitude: number,
+        longitude: number,
         protectionType: number,
         premium: BigNumber,
         beforeApplyCallback?: (address: string) => void,
@@ -104,8 +106,17 @@ export class DepegProductApi {
             beforeApplyCallback(this.depegProduct!.address);
         }
         try {
+            const offsetLat = await this.depegProduct!.OFFSET_LAT();
+            const offsetLon = await this.depegProduct!.OFFSET_LONG();
+            const coordDecimals = await this.depegProduct!.COORD_DECIMALS();
+            console.log("offsetLat", offsetLat.toString(), "offsetLon", offsetLon.toString(), "coordDecimals", coordDecimals.toString());
+            const lat = parseInt((latitude * Math.pow(10, coordDecimals)).toFixed(0)) + offsetLat;
+            const lon = parseInt((longitude * Math.pow(10, coordDecimals)).toFixed(0)) + offsetLon;
+            console.log("lat", lat.toString(), "lon", lon.toString());
             const tx = await this.depegProduct!.applyForPolicy(
                 protectionType,
+                lat,
+                lon,
                 locationId,
                 protectedAmount, 
                 premium);

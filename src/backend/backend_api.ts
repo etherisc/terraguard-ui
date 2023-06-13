@@ -68,6 +68,8 @@ export interface ApplicationApi {
         (
             walletAddress: string, 
             protectedAmount: BigNumber, 
+            latitude: number,
+            longitude: number,
             locationId: number,
             protectionType: number,
             premium: BigNumber,
@@ -150,7 +152,7 @@ export function getBackendApi(
         provider?: ethers.providers.Provider
         ): BackendApi {
     
-    const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS;
+    const depegProductContractAddress = process.env.NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS;
     if (depegProductContractAddress == null) {
         console.log("Using mock API");
         return BackendApiMock(enqueueSnackbar);

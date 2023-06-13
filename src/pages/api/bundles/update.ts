@@ -9,7 +9,7 @@ import { redisClient } from "../../../utils/redis";
 import { isIpAllowedToConnect } from "../../../utils/check_ip";
 import { TerraGuardProduct, TerraGuardRiskpool, TerraGuardProduct__factory } from "../../../contracts/terraguard-poc-contracts";
 
-const depegProductContractAddress = process.env.NEXT_PUBLIC_DEPEG_CONTRACT_ADDRESS ?? "0x0";
+const depegProductContractAddress = process.env.NEXT_PUBLIC_TERRAGUARD_CONTRACT_ADDRESS ?? "0x0";
 const usd2Decimals = parseInt(process.env.NEXT_PUBLIC_USD2_DECIMALS ?? "6");
 
 export default async function handler(
