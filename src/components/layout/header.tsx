@@ -1,4 +1,4 @@
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { IconDefinition, faHouseCrack } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Divider, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText, useTheme } from '@mui/material';
@@ -90,8 +90,7 @@ export default function Header(props: HeaderProps) {
                             <MenuIcon />
                         </IconButton>
                         <Box sx={{ mr: 4, display: 'flex', flexDirection: 'row', alignItems: 'baseline' }}>
-                            <Typography variant="h5" >Quantectum</Typography>
-                            <Typography variant="h5" sx={{ ml: 2 }}>TerraGuard</Typography>
+                            <Typography variant="h5" ><FontAwesomeIcon icon={faHouseCrack} className="fa" /> Quantectum TerraGuard</Typography>
                         </Box>
                         {/* <Box sx={{ pt: 1, display: { xs: 'inherit', md: 'none'}}}>
                             <Link href="https://www.etherisc.com" target="_blank" rel="noreferrer">
