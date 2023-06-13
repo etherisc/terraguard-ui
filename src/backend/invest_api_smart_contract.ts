@@ -125,25 +125,25 @@ export class InvestApiSmartContract implements BundleManagementApi {
         lifetime: number,
         investorWalletAddress: string, 
         investedAmount: BigNumber, 
-        minSumInsured: BigNumber, 
-        maxSumInsured: BigNumber, 
-        minDuration: number, 
-        maxDuration: number, 
-        annualPctReturn: number,
+        // minSumInsured: BigNumber, 
+        // maxSumInsured: BigNumber, 
+        // minDuration: number, 
+        // maxDuration: number, 
+        // annualPctReturn: number,
         beforeInvestCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
     ): Promise<{ status: boolean, bundleId: string | undefined}> {
-        console.log("stake", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+        console.log("stake", investorWalletAddress, investedAmount);//, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         const [tx, receipt] = await (await this.riskpoolApi()).createBundle(
             name, 
             lifetime,
             investorWalletAddress, 
             investedAmount, 
-            minSumInsured, 
-            maxSumInsured, 
-            minDuration, 
-            maxDuration, 
-            annualPctReturn, 
+            // minSumInsured, 
+            // maxSumInsured, 
+            // minDuration, 
+            // maxDuration, 
+            // annualPctReturn, 
             beforeInvestCallback, 
             beforeWaitCallback);
         const bundleId = await(await this.riskpoolApi()).extractBundleIdFromApplicationLogs(receipt.logs);

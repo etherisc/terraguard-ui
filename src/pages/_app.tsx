@@ -91,14 +91,14 @@ export function AppWithBlockchainConnection(appProps: AppProps) {
 
   let items = [
     [t('nav.link.apply'), '/', null, faCartShopping],
-    [t('nav.link.policies'), '/policies', null, faShieldHalved],
-    [t('nav.link.stake'), '/stake', null, faSackDollar],
+    // [t('nav.link.policies'), '/policies', null, faShieldHalved],
+    ['Create', '/stake', null, faSackDollar],
     [t('nav.link.bundles'), '/bundles', () => dispatch(resetSelectedBundle()), faCoins],
   ];
 
-  if (process.env.NEXT_PUBLIC_FEATURE_PRICE === 'true') {
-    items.push([t('nav.link.price'), '/price', null, faChartLine]);
-  }
+  // if (process.env.NEXT_PUBLIC_FEATURE_PRICE === 'true') {
+  //   items.push([t('nav.link.price'), '/price', null, faChartLine]);
+  // }
 
   appProps.pageProps.items = items;
   appProps.pageProps.title = t('apptitle_short');

@@ -30,21 +30,22 @@ export interface StakingFormProperties {
     readyToSubmit: (isFormReady: boolean) => void;
     stake: (
         name: string, lifetime: number, 
-        stakedAmount: BigNumber, minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
-        minDuration: number, maxDuration: number, annualPctReturn: number
-    ) => void;
+        stakedAmount: BigNumber, 
+        // minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
+        // minDuration: number, maxDuration: number, annualPctReturn: number
+    ) => Promise<void>;
 }
 
 export type IStakingFormValues = {
     bundleName: string,
-    lifetime: string;
+    // lifetime: string;
     lifetimeEndDate: Dayjs;
     stakedAmount: string;
-    protectedAmountMin: string;
-    protectedAmountMax: string;
-    coverageDurationMin: string;
-    coverageDurationMax: string;
-    annualPctReturn: string;
+    // protectedAmountMin: string;
+    // protectedAmountMax: string;
+    // coverageDurationMin: string;
+    // coverageDurationMax: string;
+    // annualPctReturn: string;
     termsAndConditions: boolean;
 };
 
@@ -67,49 +68,49 @@ export default function StakingForm(props: StakingFormProperties) {
     const annualPctReturn = bundleManagementProps.annualPctReturn;
     const maxAnnualPctReturn = bundleManagementProps.maxAnnualPctReturn;
 
-    const defaultLifetime = 90;
+    const defaultLifetime = 365;
 
     const { handleSubmit, control, formState, getValues, setValue, watch, trigger } = useForm<IStakingFormValues>({
         mode: "onChange",
         reValidateMode: "onChange",
         defaultValues: {
             bundleName: '',
-            lifetime: defaultLifetime.toString(),
+            // lifetime: defaultLifetime.toString(),
             lifetimeEndDate: dayjs().add(defaultLifetime, 'days'),
             stakedAmount: maxStakedAmount.toString(),
-            protectedAmountMin: minProtectedAmount.toString(),
-            protectedAmountMax: maxProtectedAmount.toString(),
-            coverageDurationMin: minCoverageDuration.toString(),
-            coverageDurationMax: maxCoverageDuration.toString(),
-            annualPctReturn: annualPctReturn.toString(),
+            // protectedAmountMin: minProtectedAmount.toString(),
+            // protectedAmountMax: maxProtectedAmount.toString(),
+            // coverageDurationMin: minCoverageDuration.toString(),
+            // coverageDurationMax: maxCoverageDuration.toString(),
+            // annualPctReturn: annualPctReturn.toString(),
             termsAndConditions: false
         }
     });
 
     const errors = useMemo(() => formState.errors, [formState]);
 
-    // handle changes in insured amount min/max / coverage duration and validate the other field accordingly
-    const watchProtectedAmountMin = watch("protectedAmountMin");
-    useEffect(() => {
-        // console.log("insuredAmountMin changed", watchProtectedAmountMin);
-        trigger(["protectedAmountMax", "protectedAmountMin"]);
-    }, [watchProtectedAmountMin, trigger]);
+    // // handle changes in insured amount min/max / coverage duration and validate the other field accordingly
+    // const watchProtectedAmountMin = watch("protectedAmountMin");
+    // useEffect(() => {
+    //     // console.log("insuredAmountMin changed", watchProtectedAmountMin);
+    //     trigger(["protectedAmountMax", "protectedAmountMin"]);
+    // }, [watchProtectedAmountMin, trigger]);
 
-    const watchProtectedAmountMax = watch("protectedAmountMax");
-    useEffect(() => {
-        // console.log("insuredAmountMax changed", watchProtectedAmountMax);
-        trigger("protectedAmountMin");
-    }, [watchProtectedAmountMax, trigger]);
+    // const watchProtectedAmountMax = watch("protectedAmountMax");
+    // useEffect(() => {
+    //     // console.log("insuredAmountMax changed", watchProtectedAmountMax);
+    //     trigger("protectedAmountMin");
+    // }, [watchProtectedAmountMax, trigger]);
 
-    const watchCoverageDurationMin = watch("coverageDurationMin");
-    useEffect(() => {
-        trigger("coverageDurationMax");
-    }, [watchCoverageDurationMin, trigger]);
+    // const watchCoverageDurationMin = watch("coverageDurationMin");
+    // useEffect(() => {
+    //     trigger("coverageDurationMax");
+    // }, [watchCoverageDurationMin, trigger]);
 
-    const watchCoverageDurationMax = watch("coverageDurationMax");
-    useEffect(() => {
-        trigger("coverageDurationMin");
-    }, [watchCoverageDurationMax, trigger]);
+    // const watchCoverageDurationMax = watch("coverageDurationMax");
+    // useEffect(() => {
+    //     trigger("coverageDurationMin");
+    // }, [watchCoverageDurationMax, trigger]);
 
     const [ paymentInProgress, setPaymentInProgress ] = useState(false);
 
@@ -120,14 +121,16 @@ export default function StakingForm(props: StakingFormProperties) {
         try {
             const values = getValues();
             const bundleName = values.bundleName.trim();
-            const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
+            // const lifetime = parseInt(values.lifetime) * 24 * 60 * 60;
+            const lifetime = values.lifetimeEndDate.unix() - dayjs().unix();
             const stakedAmount = parseUnits(values.stakedAmount, props.usd2Decimals);
-            const minProtectedAmount = parseUnits(values.protectedAmountMin, props.usd2Decimals);
-            const maxProtectedAmount = parseUnits(values.protectedAmountMax, props.usd2Decimals);
-            const minDuration = parseInt(values.coverageDurationMin);
-            const maxDuration = parseInt(values.coverageDurationMax);
-            const annualPctReturn = parseFloat(values.annualPctReturn);
-            await props.stake(bundleName, lifetime, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
+            // const minProtectedAmount = parseUnits(values.protectedAmountMin, props.usd2Decimals);
+            // const maxProtectedAmount = parseUnits(values.protectedAmountMax, props.usd2Decimals);
+            // const minDuration = parseInt(values.coverageDurationMin);
+            // const maxDuration = parseInt(values.coverageDurationMax);
+            // const annualPctReturn = parseFloat(values.annualPctReturn);
+            await props.stake(bundleName, lifetime, stakedAmount);
+            // await props.stake(bundleName, lifetime, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
         } finally {
             setPaymentInProgress(false);
         }
@@ -161,13 +164,13 @@ export default function StakingForm(props: StakingFormProperties) {
                 setValue("stakedAmount", stakedAmountMax.toString());
             }
 
-            // limit the maximum protected amount to the bundle cap (multiplied by the protected amount factor)
-            const protectedAmountFactor = await props.backend.bundleManagement.getProtectedAmountFactor();
-            const bundleCapitalCapProtectedAmount = parseInt(formatUnits(bundleCapitalCapBN.mul(protectedAmountFactor), props.usd2Decimals));
-            if (bundleCapitalCapProtectedAmount < maxProtectedAmount) {
-                console.log("updating insuredAmountMax", bundleCapitalCapProtectedAmount);
-                setValue("protectedAmountMax", bundleCapitalCapProtectedAmount.toString());
-            }
+            // // limit the maximum protected amount to the bundle cap (multiplied by the protected amount factor)
+            // const protectedAmountFactor = await props.backend.bundleManagement.getProtectedAmountFactor();
+            // const bundleCapitalCapProtectedAmount = parseInt(formatUnits(bundleCapitalCapBN.mul(protectedAmountFactor), props.usd2Decimals));
+            // if (bundleCapitalCapProtectedAmount < maxProtectedAmount) {
+            //     console.log("updating insuredAmountMax", bundleCapitalCapProtectedAmount);
+            //     setValue("protectedAmountMax", bundleCapitalCapProtectedAmount.toString());
+            // }
         }
         if (isConnected) {
             trigger("stakedAmount");
@@ -220,7 +223,7 @@ export default function StakingForm(props: StakingFormProperties) {
                                 />}
                         />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                {/* <Grid item xs={12} md={6}>
                     <Controller
                         name="lifetime"
                         control={control}
@@ -252,8 +255,8 @@ export default function StakingForm(props: StakingFormProperties) {
                                     ) : t('lifetime_hint')}
                                 />}
                         />
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid> */}
+                <Grid item xs={12} md={12}>
                     <Controller
                         name="lifetimeEndDate"
                         control={control}
@@ -270,14 +273,14 @@ export default function StakingForm(props: StakingFormProperties) {
                                         fullWidth: true, 
                                     }
                                 }}
-                                onAccept={(value: Dayjs|null) => {
-                                    if (value !== null) {
-                                        setValue("lifetime", value.startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
-                                    }
-                                }}
+                                // onAccept={(value: Dayjs|null) => {
+                                //     if (value !== null) {
+                                //         setValue("lifetime", value.startOf('day').diff(dayjs().startOf('day'), 'days').toString()); 
+                                //     }
+                                // }}
                                 disablePast={true}
-                                minDate={minLifetimeEndDate}
-                                maxDate={maxLifetimeEndDate}
+                                // minDate={minLifetimeEndDate}
+                                // maxDate={maxLifetimeEndDate}
                                 />}
                         />
                 </Grid>
@@ -318,7 +321,7 @@ export default function StakingForm(props: StakingFormProperties) {
                                 />}
                         />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                {/* <Grid item xs={12} md={6}>
                     <Controller
                         name="protectedAmountMin"
                         control={control}
@@ -481,7 +484,7 @@ export default function StakingForm(props: StakingFormProperties) {
                                 data-testid="annual-pct-return"
                                 />}
                         />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
                     <Controller
                         name="termsAndConditions"

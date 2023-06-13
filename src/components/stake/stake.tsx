@@ -40,44 +40,44 @@ export default function Stake(props: StakeProps) {
     const [ formDisabled, setFormDisabled ] = useState(true);
     const [ readyToStake, setReadyToStake ] = useState(false);
 
-    useEffect(() => {
-        async function checkStakingAllowed() {
-            if (isConnected && investorAddress !== undefined) {
-                const riskpoolComponentState = await props.backend.bundleManagement.getRiskpoolComponentState();
-                if (riskpoolComponentState !== ComponentState.Active) {
-                    setRiskpoolComponentActive(false);
-                    return;
-                }
-                if (! await props.backend.bundleManagement.isAllowAllAccountsEnabled()) {
-                    const isInvestorWhitelisted = await props.backend.bundleManagement.isInvestorWhitelisted(investorAddress!);
-                    console.log("whitelist check result", isInvestorWhitelisted);
-                    if (! isInvestorWhitelisted) {
-                        setIsInvestorWhitelisted(false);
-                        return;
-                    } else {
-                        setIsInvestorWhitelisted(true);
-                    }
-                }
-                const riskpoolCapacityAvailable = await props.backend.bundleManagement.isRiskpoolCapacityAvailable();
-                console.log("riskpoolCapacityAvailable", riskpoolCapacityAvailable);
-                if (! riskpoolCapacityAvailable) {
-                    setNoRiskpoolCapacityAvailable(false);
-                    return;
-                } else {
-                    setNoRiskpoolCapacityAvailable(true);
-                }
-                const activeBundleCount = await props.backend.bundleManagement.activeBundles();
-                const maxBundles = await props.backend.bundleManagement.maxBundles();
-                console.log("activeBundleCount", activeBundleCount, "maxBundles", maxBundles);
-                if (activeBundleCount >= maxBundles) {
-                    setMaxBundlesUsed(true);
-                } else {
-                    setMaxBundlesUsed(false);
-                }
-            }    
-        }
-        checkStakingAllowed();
-    }, [isConnected, props.backend.bundleManagement, investorAddress]);
+    // useEffect(() => {
+    //     async function checkStakingAllowed() {
+    //         if (isConnected && investorAddress !== undefined) {
+    //             const riskpoolComponentState = await props.backend.bundleManagement.getRiskpoolComponentState();
+    //             if (riskpoolComponentState !== ComponentState.Active) {
+    //                 setRiskpoolComponentActive(false);
+    //                 return;
+    //             }
+    //             if (! await props.backend.bundleManagement.isAllowAllAccountsEnabled()) {
+    //                 const isInvestorWhitelisted = await props.backend.bundleManagement.isInvestorWhitelisted(investorAddress!);
+    //                 console.log("whitelist check result", isInvestorWhitelisted);
+    //                 if (! isInvestorWhitelisted) {
+    //                     setIsInvestorWhitelisted(false);
+    //                     return;
+    //                 } else {
+    //                     setIsInvestorWhitelisted(true);
+    //                 }
+    //             }
+    //             const riskpoolCapacityAvailable = await props.backend.bundleManagement.isRiskpoolCapacityAvailable();
+    //             console.log("riskpoolCapacityAvailable", riskpoolCapacityAvailable);
+    //             if (! riskpoolCapacityAvailable) {
+    //                 setNoRiskpoolCapacityAvailable(false);
+    //                 return;
+    //             } else {
+    //                 setNoRiskpoolCapacityAvailable(true);
+    //             }
+    //             const activeBundleCount = await props.backend.bundleManagement.activeBundles();
+    //             const maxBundles = await props.backend.bundleManagement.maxBundles();
+    //             console.log("activeBundleCount", activeBundleCount, "maxBundles", maxBundles);
+    //             if (activeBundleCount >= maxBundles) {
+    //                 setMaxBundlesUsed(true);
+    //             } else {
+    //                 setMaxBundlesUsed(false);
+    //             }
+    //         }    
+    //     }
+    //     checkStakingAllowed();
+    // }, [isConnected, props.backend.bundleManagement, investorAddress]);
 
             
 
@@ -136,9 +136,10 @@ export default function Stake(props: StakeProps) {
 
     async function doStake(
         name: string, lifetime: number, investorWalletAddress: string, 
-        stakedAmount: BigNumber, minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
-        minDuration: number, maxDuration: number, 
-        annualPctReturn: number
+        stakedAmount: BigNumber, 
+        // minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
+        // minDuration: number, maxDuration: number, 
+        // annualPctReturn: number
     ): Promise<{ status: boolean, bundleId: string | undefined}> {
         let snackbar: SnackbarKey | undefined = undefined; 
         try {
@@ -147,11 +148,11 @@ export default function Stake(props: StakeProps) {
                 lifetime,
                 investorWalletAddress, 
                 stakedAmount, 
-                minProtectedAmount,
-                maxProtectedAmount,
-                minDuration, 
-                maxDuration, 
-                annualPctReturn, 
+                // minProtectedAmount,
+                // maxProtectedAmount,
+                // minDuration, 
+                // maxDuration, 
+                // annualPctReturn, 
                 (address: string) => {
                     snackbar = enqueueSnackbar(
                         t('stake_info', { address }),
@@ -219,9 +220,9 @@ export default function Stake(props: StakeProps) {
 
     async function stake(
         name: string, lifetime: number, stakedAmount: BigNumber, 
-        minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
-        minDuration: number, maxDuration: number, annualPctReturn: number
-    ) {
+        // minProtectedAmount: BigNumber, maxProtectedAmount: BigNumber,
+        // minDuration: number, maxDuration: number, annualPctReturn: number
+    ): Promise<void> {
         ga_event("trx_start_stake", { category: 'chain_trx' });
         try {
             enableUnloadWarning(true);
@@ -243,7 +244,8 @@ export default function Stake(props: StakeProps) {
             }
             ga_event("trx_success_stake_approve", { category: 'chain_trx' });
             setActiveStep(4);
-            const stakeResult = await doStake(name, lifetime, investorWalletAddress, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
+            // const stakeResult = await doStake(name, lifetime, investorWalletAddress, stakedAmount, minProtectedAmount, maxProtectedAmount, minDuration, maxDuration, annualPctReturn);
+            const stakeResult = await doStake(name, lifetime, investorWalletAddress, stakedAmount);
             if ( ! stakeResult.status) {
                 ga_event("trx_fail_stake", { category: 'chain_trx' });
                 setActiveStep(2);

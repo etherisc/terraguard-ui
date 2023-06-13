@@ -182,30 +182,31 @@ export class DepegRiskpoolApi {
         lifetime: number,
         investorWalletAddress: string, 
         investedAmount: BigNumber, 
-        minSumInsured: BigNumber, 
-        maxSumInsured: BigNumber, 
-        minDuration: number, 
-        maxDuration: number, 
-        annualPctReturn: number,
+        // minSumInsured: BigNumber, 
+        // maxSumInsured: BigNumber, 
+        // minDuration: number, 
+        // maxDuration: number, 
+        // annualPctReturn: number,
         beforeInvestCallback?: (address: string) => void,
         beforeWaitCallback?: (address: string) => void
     ): Promise<[ContractTransaction, ContractReceipt]> {
-        console.log("createBundle", investorWalletAddress, investedAmount, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
+        console.log("createBundle", investorWalletAddress, investedAmount);//, minSumInsured, maxSumInsured, minDuration, maxDuration, annualPctReturn);
         const apr100Level = await this.depegRiskpool.getApr100PercentLevel();
-        const apr = annualPctReturn * apr100Level.toNumber() / 100;
+        // const apr = annualPctReturn * apr100Level.toNumber() / 100;
         const riskpoolAddress = this.depegRiskpool.address;
         if (beforeInvestCallback) {
             beforeInvestCallback(riskpoolAddress);
         }
         try {
-            const tx = await this.depegRiskpool["createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"](
+            // const tx = await this.depegRiskpool["createBundle(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)"](
+            const tx = await this.depegRiskpool["createBundle(string,uint256,uint256)"](
                 name,
                 lifetime,
-                minSumInsured, 
-                maxSumInsured, 
-                minDuration * 86400, 
-                maxDuration * 86400, 
-                apr, 
+                // minSumInsured, 
+                // maxSumInsured, 
+                // minDuration * 86400, 
+                // maxDuration * 86400, 
+                // apr, 
                 investedAmount);
             if (beforeWaitCallback !== undefined) {
                 beforeWaitCallback(riskpoolAddress);
