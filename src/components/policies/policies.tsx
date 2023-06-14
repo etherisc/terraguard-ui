@@ -282,35 +282,51 @@ export default function Policies(props: PoliciesProps) {
                 </>)},
             sortComparator: (v1: BigNumber, v2: BigNumber) => bigNumberComparator(v1, v2),
         },
-        { 
-            field: 'createdAt', 
-            headerName: t('table.header.createdDate'), 
-            flex: 0.7,
-            renderCell: (params: GridRenderCellParams) => <Timestamp at={params?.value ?? 0} />,
-            sortComparator: gridNumberComparator,
+        // { 
+        //     field: 'createdAt', 
+        //     headerName: t('table.header.createdDate'), 
+        //     flex: 0.7,
+        //     renderCell: (params: GridRenderCellParams) => <Timestamp at={params?.value ?? 0} />,
+        //     sortComparator: gridNumberComparator,
+        // },
+        {
+            field: 'protectionType',
+            flex: 0.3,
         },
-        { 
-            field: 'coverageUntil', 
-            headerName: t('table.header.coverageUntil'), 
-            flex: 0.7,
-            valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
-            renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                if (! isActivePolicy(params.value!)) {
-                    return (<></>);
-                }
-                const exp = getPolicyExpiration(params.row)
-                return (<Timestamp at={exp} />);
-            },
-            sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => {
-                const exp1 = getPolicyExpiration(v1);
-                const exp2 = getPolicyExpiration(v2);   
-                return gridNumberComparator(exp1, exp2, cellParams1, cellParams2);
-            },
+        {
+            field: 'locationId',
+            flex: 0.3,
         },
+        {
+            field: 'latitude',
+            flex: 0.3,
+        },
+        {
+            field: 'longitude',
+            flex: 0.3,
+        },
+        // { 
+        //     field: 'coverageUntil', 
+        //     headerName: t('table.header.coverageUntil'), 
+        //     flex: 0.7,
+        //     valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
+        //     renderCell: (params: GridRenderCellParams<PolicyData>) => {
+        //         if (! isActivePolicy(params.value!)) {
+        //             return (<></>);
+        //         }
+        //         const exp = getPolicyExpiration(params.row)
+        //         return (<Timestamp at={exp} />);
+        //     },
+        //     sortComparator: (v1: PolicyData, v2: PolicyData, cellParams1: GridSortCellParams<any>, cellParams2: GridSortCellParams<any>) => {
+        //         const exp1 = getPolicyExpiration(v1);
+        //         const exp2 = getPolicyExpiration(v2);   
+        //         return gridNumberComparator(exp1, exp2, cellParams1, cellParams2);
+        //     },
+        // },
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
-            flex: 0.9,
+            flex: 0.5,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return render_application_state(params.value!);

@@ -163,28 +163,14 @@ export class DepegProductApi {
     ): Promise<PolicyData> {
         console.log("getPolicy", ownerWalletAddress, idx);
         const policy = await this.getPolicyForProduct(ownerWalletAddress, idx);
-        // if (checkClaim) {
-        //     const isAllowedToClaim = await this.depegProduct!.policyIsAllowedToClaim(policy.id);
-        //     policy.isAllowedToClaim = isAllowedToClaim;
 
-        //     const hasClaim = await this.depegProduct!.hasDepegClaim(policy.id);
+        const offsetLat = await this.depegProduct!.OFFSET_LAT();
+        const offsetLon = await this.depegProduct!.OFFSET_LONG();
+        const coordDecimals = await this.depegProduct!.COORD_DECIMALS();
+        
+        policy.latitude = ( policy.latitude - offsetLat ) / Math.pow(10, coordDecimals);
+        policy.longitude = ( policy.longitude - offsetLon) / Math.pow(10, coordDecimals);
 
-        //     if (hasClaim) {
-        //         const { actualAmount, claimState, claimAmount, claimCreatedAt } = await this.depegProduct!.getClaimData(policy.id);
-        //         policy.claim = {
-        //             actualAmount: actualAmount.toString(),
-        //             state: claimState,
-        //             paidAmount: undefined,
-        //             claimAmount: claimAmount.toString(),
-        //             claimCreatedAt: claimCreatedAt.toNumber(),
-        //         }
-
-        //         if (claimState == 3) { // state is closed
-        //             const claim = await this.instanceService!.getClaim(policy.id, 0); // claim id is always 0 for depeg
-        //             policy.claim!.paidAmount = claim.paidAmount.toString();
-        //         }
-        //     }
-        // }
         return policy;
     }
     
