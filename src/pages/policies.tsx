@@ -28,7 +28,7 @@ export default function PoliciesPage() {
     return (
         <>
             <Head>
-                <title>{t('apptitle')}</title>
+                <title>Quantectum TerraGuard</title>
             </Head>
 
             <Policies backend={insurance} />

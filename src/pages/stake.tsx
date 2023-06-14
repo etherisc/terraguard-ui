@@ -25,7 +25,7 @@ export default function StakePage() {
   return (
     <>
       <Head>
-          <title>{t('apptitle')}</title>
+          <title>Quantectum TerraGuard</title>
       </Head>
             
       <Stake backend={backend} />

@@ -25,7 +25,7 @@ export default function ApplicationPage() {
   return (
     <>
       <Head>
-          <title>{t('apptitle')}</title>
+          <title>Quantectum TerraGuard</title>
       </Head>
       
       <Application insurance={insurance} />
