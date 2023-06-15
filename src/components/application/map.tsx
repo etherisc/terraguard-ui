@@ -56,7 +56,7 @@ function MapPan(props: MapProps) {
             map?.panTo({ lat: position.coords.latitude, lng: position.coords.longitude });
             props.setCoords(position.coords.latitude, position.coords.longitude);
         });
-    }, []);
+    }, [map, props]);
 
     return null;
 }
