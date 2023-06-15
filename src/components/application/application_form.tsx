@@ -355,7 +355,7 @@ export default function ApplicationForm(props: ApplicationFormProperties) {
                     <Map setCoords={(lat, lng) => {
                         setValue("latitude", lat);
                         setValue("longitude", lng);
-                        setValue("locationId", parseInt((20 * (lat + lng)).toFixed(0)));
+                        setValue("locationId", Math.abs(parseInt((20 * (lat + lng)).toFixed(0))));
                     }}/>
                 </Grid>
 

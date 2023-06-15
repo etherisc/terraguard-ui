@@ -1,4 +1,4 @@
-import { faCircleInfo, faFileInvoiceDollar, faHandHoldingDollar, faInfoCircle, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo, faFileInvoiceDollar, faHandHoldingDollar, faInfoCircle, faMap, faShieldHalved, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Alert, AlertTitle, Container, Tooltip } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -242,7 +242,7 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'id', 
             headerName: t('table.header.policyId'), 
-            flex: 0.8,
+            flex: 0.4,
             valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 if (params.value.id === '') {
@@ -267,7 +267,7 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'protectedAmount', 
             headerName: t('table.header.protectedAmount'), 
-            flex: 0.8,
+            flex: 0.55,
             valueGetter: (params: GridValueGetterParams) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 const protectedAmount = BigNumber.from(params.value!.protectedAmount);
@@ -291,18 +291,32 @@ export default function Policies(props: PoliciesProps) {
         // },
         {
             field: 'protectionType',
+            headerName: 'Protection Type',
             flex: 0.3,
+            valueFormatter: (params: GridValueFormatterParams) => {
+                return 'M' + params.value;
+            }
         },
         {
             field: 'locationId',
+            headerName: 'Location ID',
             flex: 0.3,
         },
         {
             field: 'latitude',
+            headerName: 'Latitude',
             flex: 0.3,
+            valueGetter: (params: GridValueGetterParams) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return (<>
+                    {params.value!.latitude}&nbsp;
+                    <Link href={`https://www.google.com/maps/search/?api=1&query=${params.value!.latitude},${params.value!.longitude}`} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faMap} className="fa" data-testid="icon-external-link"/></Link>
+                </>);
+            }
         },
         {
             field: 'longitude',
+            headerName: 'Longitude',
             flex: 0.3,
         },
         // { 
@@ -326,7 +340,7 @@ export default function Policies(props: PoliciesProps) {
         { 
             field: 'applicationState', 
             headerName: t('table.header.status'), 
-            flex: 0.5,
+            flex: 0.3,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return render_application_state(params.value!);
@@ -340,7 +354,7 @@ export default function Policies(props: PoliciesProps) {
         {
             field: 'action',
             headerName: t('table.header.action'), 
-            flex: 0.6,
+            flex: 0.4,
             valueGetter: (params: GridValueGetterParams<any, PolicyData>) => params.row,
             renderCell: (params: GridRenderCellParams<PolicyData>) => {
                 return renderClaimCell(params.value!);
