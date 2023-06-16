@@ -309,7 +309,7 @@ export default function StakingForm(props: StakingFormProperties) {
                                 variant={INPUT_VARIANT}
                                 {...field} 
                                 InputProps={{
-                                    startAdornment: <InputAdornment position="start">{props.usd2}</InputAdornment>,
+                                    startAdornment: <InputAdornment position="start">USDC</InputAdornment>,
                                 }}
                                 error={errors.stakedAmount !== undefined}
                                 helperText={errors.stakedAmount !== undefined

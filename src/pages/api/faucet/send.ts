@@ -35,7 +35,7 @@ export default async function handler(
     }
 
     if (process.env.NEXT_FAUCET_SEND_TESTCOIN === "true") {
-        const amount = parseUnits(process.env.NEXT_FAUCET_SEND_TESTCOIN_AMOUNT ?? "1000000", currencyDecimals); // 1'000'000 USD2
+        const amount = parseUnits(process.env.NEXT_FAUCET_SEND_TESTCOIN_AMOUNT ?? "500000", currencyDecimals); // 1'000'000 USD2
         console.log("sending", currency, address);
         // transfer 1'000'000 testcoin
         const tokenAddress = process.env.NEXT_PUBLIC_FAUCET_COIN_ADDRESS ?? "";

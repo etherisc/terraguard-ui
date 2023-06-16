@@ -90,7 +90,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
                 const capital = formatCurrencyBN(params.value, props.usd2Decimals);
-                return `${props.usd2} ${capital}`;
+                return `USDC ${capital}`;
             }
         },
         { 
@@ -100,7 +100,7 @@ export default function BundlesListDesktop(props: BundlesProps) {
             valueGetter: (params: GridValueGetterParams) => BigNumber.from(params.value),
             valueFormatter: (params: GridValueFormatterParams<BigNumber>) => {
                 const capacity = formatCurrencyBN(params.value, props.usd2Decimals);
-                return `${props.usd2} ${capacity}`
+                return `USDC ${capacity}`
             }
         },
         { 

@@ -47,12 +47,12 @@ export default function BundleDetails(props: BundleDetailsProps) {
             <NameValue name={t('state')} value={<>{formatBundleState(props.bundle, t)}</>}/>
             <NameValue name={t('balance')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(balance, props.decimals)} 
+                    {symbolProtected + " " + formatCurrencyBN(balance, props.decimals)} 
                     <WithTooltip tooltipText={t('balance_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             <NameValue name={t('capital')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(capital, props.decimals)} 
+                    {symbolProtected + " " + formatCurrencyBN(capital, props.decimals)} 
                     <WithTooltip tooltipText={t('capital_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>} />
             {/* <NameValue name={t('supported_capital')} value={
@@ -62,14 +62,14 @@ export default function BundleDetails(props: BundleDetailsProps) {
                 </>} /> */}
             <NameValue name={t('locked')} value={
                 <>
-                    {symbol + " " + formatCurrencyBN(locked, props.decimals)}
+                    {symbolProtected + " " + formatCurrencyBN(locked, props.decimals)}
                     <WithTooltip tooltipText={t('locked_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
                 </>}  />
-            <NameValue name={t('capacity')} value={
+            {/* <NameValue name={t('capacity')} value={
             <>
                 {symbolProtected + " " + formatCurrencyBN(capacity, props.decimalsProtected)}
                 <WithTooltip tooltipText={t('capacity_tooltip')}><Typography color={grey[500]}><FontAwesomeIcon icon={faCircleInfo} className="fa" /></Typography></WithTooltip>
-            </>} />
+            </>} /> */}
             {/* <NameValue name={t('supported_capacity')} value={
                 <>
                     {symbolProtected + " " + formatCurrencyBN(supportedCapacity, props.decimalsProtected)}

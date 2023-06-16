@@ -301,18 +301,25 @@ export default function Policies(props: PoliciesProps) {
             field: 'locationId',
             headerName: 'Location ID',
             flex: 0.3,
+            valueGetter: (params: GridValueGetterParams) => params.row,
+            renderCell: (params: GridRenderCellParams<PolicyData>) => {
+                return (<>
+                    {params.value!.locationId}&nbsp;
+                    <Link href={`https://www.google.com/maps/search/?api=1&query=${params.value!.latitude},${params.value!.longitude}`} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faMap} className="fa" data-testid="icon-external-link"/></Link>
+                </>);
+            }
         },
         {
             field: 'latitude',
             headerName: 'Latitude',
             flex: 0.3,
-            valueGetter: (params: GridValueGetterParams) => params.row,
-            renderCell: (params: GridRenderCellParams<PolicyData>) => {
-                return (<>
-                    {params.value!.latitude}&nbsp;
-                    <Link href={`https://www.google.com/maps/search/?api=1&query=${params.value!.latitude},${params.value!.longitude}`} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faMap} className="fa" data-testid="icon-external-link"/></Link>
-                </>);
-            }
+            // valueGetter: (params: GridValueGetterParams) => params.row,
+            // renderCell: (params: GridRenderCellParams<PolicyData>) => {
+            //     return (<>
+            //         {params.value!.latitude}&nbsp;
+            //         <Link href={`https://www.google.com/maps/search/?api=1&query=${params.value!.latitude},${params.value!.longitude}`} target="_blank" rel="noopener noreferrer"><FontAwesomeIcon icon={faMap} className="fa" data-testid="icon-external-link"/></Link>
+            //     </>);
+            // }
         },
         {
             field: 'longitude',

@@ -276,8 +276,8 @@ export default function ShowBundle(props: ShowBundleProps) {
                     />
                 { isShowBundleWithdraw && <BundleWithdrawForm 
                         bundle={bundle!} 
-                        currency={props.backend.usd2} 
-                        decimals={props.backend.usd2Decimals} 
+                        currency={props.backend.usd1} 
+                        decimals={props.backend.usd1Decimals} 
                         doWithdraw={withdrawAmount}
                         doCancel={() => dispatch(showBundleWithdraw(false))}
                         />
@@ -287,8 +287,8 @@ export default function ShowBundle(props: ShowBundleProps) {
                         maxStakedAmount={props.backend.bundleManagement.maxStakedAmount}
                         getRemainingRiskpoolCapacity={getRemainingCapacity}
                         getBundleCapitalCap={getBundleCapitalCap}
-                        currency={props.backend.usd2} 
-                        decimals={props.backend.usd2Decimals} 
+                        currency={props.backend.usd1} 
+                        decimals={props.backend.usd1Decimals} 
                         doFund={fundBundle}
                         doCancel={() => dispatch(showBundleFund(false))}
                         />
